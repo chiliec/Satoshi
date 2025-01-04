@@ -1,6 +1,7 @@
 import "@stdlib/deploy";
 import "@stdlib/ownable";
 import "./traits/Jetton.tact";
+import "./helpers/subsidy.tact";
 
 message F {
     receiver: Address;
@@ -31,9 +32,9 @@ contract Satoshi with OwnableTransferable, Jetton, Deployable {
 
         // If so, send the money to the receiver
         let blocksCount = 1; // TODO: change to sum of missed blocks
-        let amount = ton("1"); // TODO: change to real amount
         self.block += blocksCount;
         self.time = now();
+        let amount = getBlockSubsidy(self.block) * blocksCount;
         self.mint(msg.receiver, amount, myAddress());
 
         // Notify the caller that the receiver was executed and forward remaining value back
@@ -48,6 +49,7 @@ contract Satoshi with OwnableTransferable, Jetton, Deployable {
         return MiningParams{
             last_block: self.block,
             last_block_time: self.time,
+            current_subsidy: getBlockSubsidy(self.block),
         };
     }
 }
@@ -55,4 +57,5 @@ contract Satoshi with OwnableTransferable, Jetton, Deployable {
 struct MiningParams {
     last_block: Int as uint32;
     last_block_time: Int as uint32;
+    current_subsidy: Int as coins;
 }
