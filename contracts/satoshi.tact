@@ -1,31 +1,58 @@
 import "@stdlib/deploy";
+import "@stdlib/ownable";
+import "./traits/Jetton.tact";
 
-message Add {
-    queryId: Int as uint64;
-    amount: Int as uint32;
+message F {
+    receiver: Address;
 }
 
-contract Satoshi with Deployable {
-    id: Int as uint32;
-    counter: Int as uint32;
+contract Satoshi with OwnableTransferable, Jetton, Deployable {
+    // https://github.com/bitcoin/bitcoin/blob/63d0b930f821132badd804822a46232a5f98bbef/src/consensus/amount.h#L26
+    max_supply: Int as coins = ton("21000000");
+    mintable: Bool = true;
+    block: Int as uint32;
+    time: Int as uint32;
+    totalSupply: Int as coins;
+    owner: Address;
+    content: Cell;
 
-    init(id: Int) {
-        self.id = id;
-        self.counter = 0;
+    init() {
+        self.block = 0;
+        self.time = now();
+        self.totalSupply = 0;
+        self.owner = sender();
+        self.content = beginCell().storeUint(0, 64).endCell();
     }
 
-    receive(msg: Add) {
-        self.counter += msg.amount;
+    receive(msg: F) {
+        // Check chance
+        let chance: Bool = random(0, 101) > 50; // TODO: change to real chance
+        require(chance, "Mining failed");
+
+        // If so, send the money to the receiver
+        let blocksCount = 1; // TODO: change to sum of missed blocks
+        let amount = ton("1"); // TODO: change to real amount
+        self.block += blocksCount;
+        self.time = now();
+        self.mint(msg.receiver, amount, myAddress());
 
         // Notify the caller that the receiver was executed and forward remaining value back
-        self.notify("Cashback".asComment());
+        let body: StringBuilder = beginString();
+        body.append("Block #");
+        body.append(self.block.toString());
+        body.append(" mined successfully!");
+        self.notify(body.toString().asComment());
     }
 
-    get fun counter(): Int {
-        return self.counter;
+    get fun get_params(): MiningParams {
+        return MiningParams{
+            last_block: self.block,
+            last_block_time: self.time,
+        };
     }
+}
 
-    get fun id(): Int {
-        return self.id;
-    }
+struct MiningParams {
+    last_block: Int as uint32;
+    last_block_time: Int as uint32;
 }
