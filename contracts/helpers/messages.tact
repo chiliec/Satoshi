@@ -45,3 +45,7 @@ message(0xd53276db) TokenExcesses {
 message TokenUpdateContent {
     content: Cell;
 }
+
+message Mine {
+    receiver: Address;
+}
