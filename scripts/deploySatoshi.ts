@@ -3,7 +3,7 @@ import { Satoshi } from '../wrappers/Satoshi';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
-    const satoshi = provider.open(await Satoshi.fromInit(BigInt(Math.floor(Math.random() * 10000))));
+    const satoshi = provider.open(await Satoshi.fromInit());
 
     await satoshi.send(
         provider.sender(),
@@ -18,5 +18,5 @@ export async function run(provider: NetworkProvider) {
 
     await provider.waitForDeploy(satoshi.address);
 
-    console.log('ID', await satoshi.getId());
+    console.log('Owner', await satoshi.getOwner());
 }
