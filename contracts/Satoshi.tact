@@ -22,7 +22,7 @@ contract Satoshi with OwnableTransferable, Jetton, Deployable {
         self.time = now();
         self.totalSupply = 0;
         self.owner = sender();
-        self.content = beginCell().storeUint(0, 64).endCell();
+        self.content = beginCell().storeUint(0, 64).endCell(); // TODO: change to real content
     }
 
     receive(msg: F) {
@@ -30,7 +30,7 @@ contract Satoshi with OwnableTransferable, Jetton, Deployable {
         let chance: Bool = random(0, 101) > 50; // TODO: change to real chance
         require(chance, "Mining failed");
 
-        // If so, send the money to the receiver
+        // Send the money to the receiver
         let blocksCount = 1; // TODO: change to sum of missed blocks
         self.block += blocksCount;
         self.time = now();

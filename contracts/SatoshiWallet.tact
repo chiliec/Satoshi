@@ -1,6 +1,6 @@
-import "./messages.tact";
+import "./helpers/messages.tact";
 
-struct JettonWalletData {
+struct SatoshiWalletData {
     balance: Int;
     owner: Address;
     master: Address;
@@ -8,7 +8,7 @@ struct JettonWalletData {
 }
 
 @interface("org.ton.jetton.wallet")
-contract JettonDefaultWallet {
+contract SatoshiWallet {
     const minTonsForStorage: Int = ton("0.01");
     const gasConsumption: Int = ton("0.01");
 
@@ -35,7 +35,7 @@ contract JettonDefaultWallet {
         self.balance = self.balance - msg.amount;
         require(self.balance >= 0, "Invalid balance");
 
-        let init: StateInit = initOf JettonDefaultWallet(self.master, msg.destination);
+        let init: StateInit = initOf SatoshiWallet(self.master, msg.destination);
         let walletAddress: Address = contractAddress(init);
         send(SendParameters{
                 to: walletAddress,
@@ -59,7 +59,7 @@ contract JettonDefaultWallet {
         let ctx: Context = context();
 
         if (ctx.sender != self.master) {
-            let sinit: StateInit = initOf JettonDefaultWallet(self.master, msg.from);
+            let sinit: StateInit = initOf SatoshiWallet(self.master, msg.from);
             require(contractAddress(sinit) == ctx.sender, "Invalid sender!");
         }
 
@@ -142,12 +142,12 @@ contract JettonDefaultWallet {
         self.balance = self.balance + src.amount;
     }
 
-    get fun get_wallet_data(): JettonWalletData {
-        return JettonWalletData{
+    get fun get_wallet_data(): SatoshiWalletData {
+        return SatoshiWalletData{
             balance: self.balance,
             owner: self.owner,
             master: self.master,
-            walletCode: (initOf JettonDefaultWallet(self.master, self.owner)).code
+            walletCode: (initOf SatoshiWallet(self.master, self.owner)).code
         };
     }
 }

@@ -1,4 +1,4 @@
-import "../messages.tact";
+import "../helpers/messages.tact";
 import "../JettonDefaultWallet.tact";
 import "@stdlib/ownable";
 
@@ -13,7 +13,7 @@ struct JettonData {
 @interface("org.ton.jetton.master")
 trait Jetton with Ownable {
 
-    totalSupply: Int; // Already set initially
+    totalSupply: Int;
     mintable: Bool;
     owner: Address;
     content: Cell;
@@ -46,7 +46,7 @@ trait Jetton with Ownable {
     // @amount The amount of Jetton token being minted
     // @response_destination The previous owner address
     fun mint(to: Address, amount: Int, response_destination: Address) {
-        require(self.totalSupply + amount <= self.max_supply, "The total supply will be overlapping.");
+        require(self.totalSupply + amount <= self.max_supply, "Can't mint more than max supply");
         self.totalSupply = self.totalSupply + amount; // Update total supply
 
         let winit: StateInit = self.getJettonWalletInit(to); // Create message
