@@ -39,7 +39,7 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
         self.attempts += 1;
 
         // Check chance probability
-        let randomValue: Int = random(0, 101);
+        let randomValue: Int = random(1, 101);
         let minutesSinceLastBlock: Int = (now() - self.time) / 60;
         let probability: Int = self.getProbability(minutesSinceLastBlock, self.attempts);
         require(probability >= randomValue, "Mining failed");
