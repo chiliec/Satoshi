@@ -1,5 +1,5 @@
 import { Blockchain, BlockchainTransaction, SandboxContract, TreasuryContract } from '@ton/sandbox';
-import { fromNano, toNano } from '@ton/core';
+import { toNano } from '@ton/core';
 import { Satoshi } from '../wrappers/Satoshi';
 import '@ton/test-utils';
 
@@ -71,13 +71,40 @@ describe('Satoshi', () => {
     });
 
     it('should get start mining data', async () => {
-        const block = (await satoshi.getGetMiningData());
+        const data = (await satoshi.getGetMiningData());
         const expectedSubsidy = toNano("50");
-        expect(block).toEqual({
+        expect(data).toEqual({
             "$$type": "MiningParams",
             last_block: 0n,
             current_subsidy: expectedSubsidy,
-            last_block_time: block.last_block_time
+            last_block_time: data.last_block_time
         });
+    });
+
+    it('should mine correctly', async () => {
+        let wallet = await randomTreasury();
+        let failedTrxs = await mine(wallet); // chance ~= 1%
+        expect(failedTrxs).toHaveLength(3);
+        expect((await satoshi.getGetJettonData()).totalSupply).toEqual(toNano(0));
+
+        incrementBlockchainTime(60 * 10);
+
+        let successTrxs = await mine(wallet); // chance = 100%
+        expect(successTrxs).toHaveLength(4);
+        expect((await satoshi.getGetJettonData()).totalSupply).toEqual(toNano(50));
+    });
+
+    it('should mine predictable with halvings', async () => {
+        let wallet = await randomTreasury();
+        const iterCount = 22
+        const iterBlocks = 10000
+        var shouldEqualSupply = 0n
+        for (let i = 1; i < iterCount; i++) {
+            incrementBlockchainTime(60 * 10 * Number(iterBlocks))
+            await mine(wallet)
+            const data = (await satoshi.getGetMiningData())
+            shouldEqualSupply += BigInt(iterBlocks) * data.current_subsidy
+            expect((await satoshi.getGetJettonData()).totalSupply).toEqual(shouldEqualSupply)
+        }
     });
 });
