@@ -39,8 +39,14 @@ describe('Satoshi', () => {
         // blockchain and satoshi are ready to use
     });
 
-    it('should check original subsidy', async () => {
-        const subsidy = (await satoshi.getGetParams()).current_subsidy;
-        expect(fromNano(subsidy)).toEqual("50");
+    it('should get start mining data', async () => {
+        const block = (await satoshi.getGetMiningData());
+        const expectedSubsidy = toNano("50");
+        expect(block).toEqual({
+            "$$type": "MiningParams",
+            last_block: 0n,
+            current_subsidy: expectedSubsidy,
+            last_block_time: block.last_block_time
+        });
     });
 });

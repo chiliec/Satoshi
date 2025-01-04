@@ -1,5 +1,5 @@
 import "../helpers/messages.tact";
-import "../JettonDefaultWallet.tact";
+import "../SatoshiWallet.tact";
 import "@stdlib/ownable";
 
 struct JettonData {
@@ -75,7 +75,7 @@ trait Jetton with Ownable {
     }
 
     virtual fun getJettonWalletInit(address: Address): StateInit {
-        return initOf JettonDefaultWallet(myAddress(), address);
+        return initOf SatoshiWallet(myAddress(), address);
     }
 
     // ====== Get Methods ====== //

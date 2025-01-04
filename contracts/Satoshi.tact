@@ -45,7 +45,7 @@ contract Satoshi with OwnableTransferable, Jetton, Deployable {
         self.notify(body.toString().asComment());
     }
 
-    get fun get_params(): MiningParams {
+    get fun get_mining_data(): MiningParams {
         return MiningParams{
             last_block: self.block,
             last_block_time: self.time,
