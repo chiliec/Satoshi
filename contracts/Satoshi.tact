@@ -16,7 +16,9 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
     // Mining params
     block: Int as uint32;
     time: Int as uint32;
-    attempts: Int as uint32;
+    attempts: Int as uint16;
+
+    override const storageReserve: Int = ton("0.045");
 
     init() {
         self.block = 0;
@@ -31,33 +33,32 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
         self.mine(msg.receiver);
     }
 
-    receive() {
+    receive("F") {
         self.mine(sender());
     }
 
     fun mine(receiver: Address) {
+        require(context().value >= ton("0.1"), "Insufficient value");
         self.attempts += 1;
-
         // Check chance probability
-        let randomValue: Int = random(1, 101);
+        let randomValue: Int = random(0, 101);
         let minutesSinceLastBlock: Int = (now() - self.time) / 60;
-        let probability: Int = self.getProbability(minutesSinceLastBlock, self.attempts);
-        require(probability >= randomValue, "Mining failed");
-
-        // Update params and send the money to the receiver
-        let blocksMined = (minutesSinceLastBlock / 10) > 1 ? (minutesSinceLastBlock / 10) : 1;
-        self.block += blocksMined;
-        self.time = now();
-        self.attempts = 0;
-        let amount = getBlockSubsidy(self.block) * blocksMined;
-        self.mint(receiver, amount, myAddress());
-
-        // Notify the caller that the receiver was executed and forward remaining value back
-        let body: StringBuilder = beginString();
-        body.append("Block #");
-        body.append(self.block.toString());
-        body.append(" mined successfully!");
-        self.notify(body.toString().asComment());
+        let probability: Int = self.calculateBlockProbability(minutesSinceLastBlock, self.attempts);
+        if (probability >= randomValue) {
+            // Update params and send the money to the receiver
+            let blocksMined = (minutesSinceLastBlock / 10) > 1 ? (minutesSinceLastBlock / 10) : 1;
+            self.block += blocksMined;
+            self.time = now();
+            self.attempts = 0;
+            let amount = getBlockSubsidy(self.block) * blocksMined;
+            let body: StringBuilder = beginString();
+            body.append("Block #");
+            body.append(self.block.toString());
+            body.append(" mined successfully!");
+            self.mint(sender(), receiver, amount, body.toString());
+        } else {
+            self.notify("Mining failed".asComment());
+        }
     }
 
     get fun get_mining_data(): MiningParams {
@@ -65,6 +66,8 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
             last_block: self.block,
             last_block_time: self.time,
             current_subsidy: getBlockSubsidy(self.block),
+            attempts: self.attempts,
+            probability: self.calculateBlockProbability(self.time, self.attempts),
         };
     }
 }
@@ -73,4 +76,6 @@ struct MiningParams {
     last_block: Int as uint32;
     last_block_time: Int as uint32;
     current_subsidy: Int as coins;
+    attempts: Int as uint16;
+    probability: Int as uint8;
 }

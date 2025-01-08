@@ -1,30 +1,17 @@
 trait Probability {
+    const baseThreshold: Int = 10;
+    const maxProbability: Int = 100;
+    const minProbability: Int = 1;
+    const scale: Int = 1000000;
 
-    const baseThreshold: Int = 10; // Minutes after which the probability increases significantly
-    const maxProbability: Int = 100; // Maximum probability (100%)
-    const minProbability: Int = 1; // Minimum probability (1%)
+    fun calculateBlockProbability(minutesSinceLastBlock: Int, attemptsSinceLastBlock: Int): Int {
+        let timeFactor: Int = minutesSinceLastBlock * minutesSinceLastBlock * 10000 / self.scale;
 
-    fun getProbability(
-        minutesSinceLastBlock: Int,
-        attemptsSinceLastBlock: Int
-    ): Int {
-        // Calculate the influence of time
-        let timeFactor = minutesSinceLastBlock >= self.baseThreshold
-            ? pow((minutesSinceLastBlock - self.baseThreshold) / self.baseThreshold + 1, 3)
-            : pow(minutesSinceLastBlock / self.baseThreshold, 2);
+        let attemptsFactor: Int = (attemptsSinceLastBlock > 0)
+            ? self.scale / log2(attemptsSinceLastBlock + 2)
+            : self.scale;
 
-        // Calculate the influence of attempts with smoother reduction
-        let attemptsFactor = attemptsSinceLastBlock > 0
-            ? 1 / log2(attemptsSinceLastBlock + 2)
-            : 1;
-
-        // Combine factors to compute raw probability
-        let probability = self.maxProbability * timeFactor * attemptsFactor;
-
-        // Clamp probability within the range of minProbability to maxProbability
-        probability = max(self.minProbability, min(self.maxProbability, probability));
-
-        return probability;
+        let rawProbability: Int = self.maxProbability * timeFactor * attemptsFactor / self.scale;
+        return max(self.minProbability, min(self.maxProbability, rawProbability));
     }
-
 }

@@ -11,7 +11,7 @@ export async function run(provider: NetworkProvider) {
     if (!owner) {
         throw new Error('No address in provider found')
     }
-    const salt = await ui.input('Please enter salt: ')
+    const salt = await ui.input('Please enter salt:')
     const vanityCodeCell = await compile('VanityContract')
     const vanity = provider.open(VanityContract.createFromConfig({
         salt, owner

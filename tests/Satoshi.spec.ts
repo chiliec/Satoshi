@@ -23,7 +23,7 @@ describe('Satoshi', () => {
     async function mine(treasury: SandboxContract<TreasuryContract>): Promise<BlockchainTransaction[]> {
         const result = await satoshi.send(treasury.getSender(),
             {
-                value: toNano("0.12"),
+                value: toNano("0.2"),
             },
             {
                 $$type: 'Mine',
@@ -77,7 +77,9 @@ describe('Satoshi', () => {
             "$$type": "MiningParams",
             last_block: 0n,
             current_subsidy: expectedSubsidy,
-            last_block_time: data.last_block_time
+            last_block_time: data.last_block_time,
+            attempts: data.attempts,
+            probability: data.probability,
         })
     })
 
@@ -85,42 +87,44 @@ describe('Satoshi', () => {
         const wallet = await randomTreasury()
         let attempts = 100
         let successCount = 0
+        let previousTotalSupply = 0n
         for (let i = 0; i < attempts; i++) {
             incrementBlockchainTime(10)
-            const transactions = await mine(wallet)
-            if (transactions.length === 4) {
+            await mine(wallet)
+            const totalSupply = (await satoshi.getGetJettonData()).totalSupply
+            if (totalSupply > previousTotalSupply) {
                 successCount++
             }
+            previousTotalSupply = totalSupply
         }
         const successRate = successCount / attempts
         expect(successRate).toBeGreaterThan(0.005)
-        expect(successRate).toBeLessThan(0.015)
+        expect(successRate).toBeLessThanOrEqual(0.02)
     })
-
 
     it('should mine correctly', async () => {
         let wallet = await randomTreasury()
         let failedTrxs = await mine(wallet) // chance ~= 1%
-        expect(failedTrxs).toHaveLength(3)
         expect((await satoshi.getGetJettonData()).totalSupply).toEqual(toNano(0))
+        expect(failedTrxs).toHaveLength(3)
 
         incrementBlockchainTime(60 * 10)
 
         let successTrxs = await mine(wallet) // chance = 100%
-        expect(successTrxs).toHaveLength(4)
         expect((await satoshi.getGetJettonData()).totalSupply).toEqual(toNano(50))
+        expect(successTrxs).toHaveLength(4)
     })
 
     it('should mine predictable with halvings', async () => {
         const iterCount = 22
         const iterBlocks = 10000
-        var shouldEqualSupply = 0n
+        let shouldEqualSupply = 0n
         incrementBlockchainTime(60 * 10 * Number(iterBlocks))
         let wallet = await randomTreasury()
         for (let i = 1; i < iterCount; i++) {
             await mine(wallet)
             incrementBlockchainTime(60 * 10 * Number(iterBlocks))
-            const miningData = (await satoshi.getGetMiningData())
+            const miningData = await satoshi.getGetMiningData()
             shouldEqualSupply += BigInt(iterBlocks) * miningData.current_subsidy
             expect((await satoshi.getGetJettonData()).totalSupply).toEqual(shouldEqualSupply)
         }

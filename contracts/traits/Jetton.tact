@@ -11,7 +11,7 @@ struct JettonData {
 }
 
 @interface("org.ton.jetton.master")
-trait Jetton with Ownable {
+trait Jetton with OwnableTransferable {
 
     totalSupply: Int;
     mintable: Bool;
@@ -42,30 +42,36 @@ trait Jetton with Ownable {
         }
     }
 
+    // @from The Address receive remaining value after minting
     // @to The Address receive the Jetton token after minting
     // @amount The amount of Jetton token being minted
-    // @response_destination The previous owner address
-    fun mint(to: Address, amount: Int, response_destination: Address) {
+    // @comment The comment to be sent in the message body
+    fun mint(from: Address, to: Address, amount: Int, comment: String) {
         require(self.totalSupply + amount <= self.max_supply, "Can't mint more than max supply");
-        self.totalSupply = self.totalSupply + amount; // Update total supply
+        self.totalSupply = self.totalSupply + amount;
 
-        let winit: StateInit = self.getJettonWalletInit(to); // Create message
+        let winit: StateInit = self.getJettonWalletInit(to);
         send(SendParameters{
             to: contractAddress(winit),
             value: 0,
             bounce: false,
-            mode: SendRemainingValue,
+            mode: SendRemainingValue | SendIgnoreErrors,
             body: TokenTransferInternal{
                 queryId: 0,
                 amount: amount,
                 from: myAddress(),
-                response_destination: response_destination,
+                response_destination: from,
                 forward_ton_amount: 0,
-                forward_payload: emptySlice()
+                forward_payload: comment.asSlice()
             }.toCell(),
             code: winit.code,
             data: winit.data
         });
+    }
+
+    receive("withdraw"){
+        require(sender() == self.owner, "Only owner is allowed to withdraw");
+        send(SendParameters{to: self.owner, value: 0, mode: SendRemainingBalance | SendIgnoreErrors});
     }
 
     fun requireWallet(owner: Address) {

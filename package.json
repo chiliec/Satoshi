@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "scripts": {
         "start": "blueprint run",
-        "build": "blueprint build",
+        "deploy": "blueprint run deploySatoshi",
+        "build": "blueprint build Satoshi",
         "test": "jest --verbose",
         "update": "npx npm-check-updates -u"
     },
