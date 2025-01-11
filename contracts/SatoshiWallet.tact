@@ -1,49 +1,38 @@
 import "./helpers/messages.tact";
 
-struct SatoshiWalletData {
-    balance: Int;
-    owner: Address;
-    master: Address;
-    walletCode: Cell;
-}
-
 @interface("org.ton.jetton.wallet")
 contract SatoshiWallet {
-    const minTonsForStorage: Int = ton("0.01");
-    const gasConsumption: Int = ton("0.01");
+    const minTonsForStorage: Int = ton("0.019");
+    const gasConsumption: Int = ton("0.013");
 
-    balance: Int;
+    balance: Int as coins = 0;
     owner: Address;
     master: Address;
 
-    init(master: Address, owner: Address) {
+    init(master: Address, owner: Address){
         self.balance = 0;
-        self.owner = owner;
         self.master = master;
+        self.owner = owner;
     }
 
     receive(msg: TokenTransfer) { // 0xf8a7ea5
         let ctx: Context = context(); // Check sender
         require(ctx.sender == self.owner, "Invalid sender");
-
-        // Gas checks
-        let fwdFee: Int = ctx.readForwardFee() + ctx.readForwardFee();
-        let final: Int =  2 * self.gasConsumption + self.minTonsForStorage + fwdFee;
-        require(ctx.value > min(final, ton("0.01")), "Invalid value!!");
-
+        let final: Int =
+            (((ctx.readForwardFee() * 2 + 2 * self.gasConsumption) + self.minTonsForStorage) + msg.forward_ton_amount); // Gas checks, forward_ton = 0.152
+        require(ctx.value > final, "Invalid value");
         // Update balance
-        self.balance = self.balance - msg.amount;
+        self.balance = (self.balance - msg.amount);
         require(self.balance >= 0, "Invalid balance");
-
-        let init: StateInit = initOf SatoshiWallet(self.master, msg.destination);
-        let walletAddress: Address = contractAddress(init);
+        let init: StateInit = initOf SatoshiWallet(self.master, msg.sender);
+        let wallet_address: Address = contractAddress(init);
         send(SendParameters{
-                to: walletAddress,
+                to: wallet_address,
                 value: 0,
                 mode: SendRemainingValue,
-                bounce: false,
-                body: TokenTransferInternal{
-                    queryId: msg.queryId,
+                bounce: true,
+                body: TokenTransferInternal{ // 0x178d4519
+                    query_id: msg.query_id,
                     amount: msg.amount,
                     from: self.owner,
                     response_destination: msg.response_destination,
@@ -52,94 +41,88 @@ contract SatoshiWallet {
                 }.toCell(),
                 code: init.code,
                 data: init.data
-            });
+            }
+        );
     }
 
     receive(msg: TokenTransferInternal) { // 0x178d4519
         let ctx: Context = context();
-
         if (ctx.sender != self.master) {
             let sinit: StateInit = initOf SatoshiWallet(self.master, msg.from);
             require(contractAddress(sinit) == ctx.sender, "Invalid sender!");
         }
-
         // Update balance
-        self.balance = self.balance + msg.amount;
+        self.balance = (self.balance + msg.amount);
         require(self.balance >= 0, "Invalid balance");
-
         // Get value for gas
-        let msgValue: Int = self.msgValue(ctx.value);
-        let fwdFee: Int = ctx.readForwardFee();
-        msgValue = msgValue - msg.forward_ton_amount - fwdFee;
-
-         // 0x7362d09c - notify the new owner of JettonToken that the transfer is complete
+        let value: Int = self.msg_value(ctx.value);
+        let fwd_fee: Int = ctx.readForwardFee();
         if (msg.forward_ton_amount > 0) {
+            value = ((value - msg.forward_ton_amount) - fwd_fee);
             send(SendParameters{
-                to: self.owner,
-                value: msg.forward_ton_amount,
-                mode: SendPayGasSeparately + SendIgnoreErrors,
-                bounce: false,
-                body: TokenNotification {
-                    queryId: msg.queryId,
-                    amount: msg.amount,
-                    from: msg.from,
-                    forward_payload: msg.forward_payload
-                }.toCell()
-            });
+                    to: self.owner,
+                    value: msg.forward_ton_amount,
+                    mode: SendPayGasSeparately,
+                    bounce: false,
+                    body: TokenNotification{ // 0x7362d09c -- Remind the new Owner
+                        query_id: msg.query_id,
+                        amount: msg.amount,
+                        from: msg.from,
+                        forward_payload: msg.forward_payload
+                    }.toCell()
+                }
+            );
         }
-
         // 0xd53276db -- Cashback to the original Sender
-        if (msg.response_destination != null) {
-            send(SendParameters {
-                to: msg.response_destination!!,
-                value: msgValue,
-                bounce: false,
-                body: TokenExcesses {
-                    queryId: msg.queryId
-                }.toCell(),
-                mode: SendIgnoreErrors
-            });
+        if (msg.response_destination != null && value > 0) {
+            send(SendParameters{
+                    to: msg.response_destination!!,
+                    value: value,
+                    bounce: false,
+                    body: TokenExcesses{query_id: msg.query_id}.toCell(),
+                    mode: SendPayGasSeparately
+                }
+            );
         }
     }
 
-    receive(msg: TokenBurn) {
+    receive(msg: TokenBurn){
         let ctx: Context = context();
-        require(ctx.sender == self.owner, "Invalid sender");  // Check sender
+        require(ctx.sender == self.owner, "Invalid sender"); // Check sender
 
-        self.balance = self.balance - msg.amount; // Update balance
+        self.balance = (self.balance - msg.amount); // Update balance
         require(self.balance >= 0, "Invalid balance");
-
-        let fwdFee: Int = ctx.readForwardFee(); // Gas checks
-        require(ctx.value > fwdFee + 2 * self.gasConsumption + self.minTonsForStorage, "Invalid value - Burn");
-
+        let fwd_fee: Int = ctx.readForwardFee(); // Gas checks
+        require(ctx.value > ((fwd_fee + 2 * self.gasConsumption) + self.minTonsForStorage), "Invalid value - Burn");
         // Burn tokens
         send(SendParameters{
-            to: self.master,
-            value: 0,
-            mode: SendRemainingValue,
-            bounce: true,
-            body: TokenBurnNotification{
-                queryId: msg.queryId,
-                amount: msg.amount,
-                owner: self.owner,
-                response_destination: self.owner
-            }.toCell()
-        });
+                to: self.master,
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: true,
+                body: TokenBurnNotification{
+                    query_id: msg.query_id,
+                    amount: msg.amount,
+                    sender: self.owner,
+                    response_destination: msg.response_destination
+                }.toCell()
+            }
+        );
     }
 
-    get fun msgValue(value: Int): Int {
-        let tonBalanceBeforeMsg: Int = myBalance() - value;
-        let storageFee: Int = self.minTonsForStorage - min(tonBalanceBeforeMsg, self.minTonsForStorage);
-        value = value - (storageFee + self.gasConsumption);
+    fun msg_value(value: Int): Int {
+        let ton_balance_before_msg: Int = (myBalance() - value);
+        let storage_fee: Int = (self.minTonsForStorage - min(ton_balance_before_msg, self.minTonsForStorage));
+        value = (value - (storage_fee + self.gasConsumption));
         return value;
     }
 
-    bounced(src: bounced<TokenTransferInternal>) {
-        self.balance = self.balance + src.amount;
+    bounced(msg: bounced<TokenTransferInternal>){
+        self.balance = (self.balance + msg.amount);
     }
 
-    bounced(src: bounced<TokenBurnNotification>) {
-        self.balance = self.balance + src.amount;
+    bounced(msg: bounced<TokenBurnNotification>){
+        self.balance = (self.balance + msg.amount);
     }
 
     get fun get_wallet_data(): SatoshiWalletData {
@@ -147,7 +130,7 @@ contract SatoshiWallet {
             balance: self.balance,
             owner: self.owner,
             master: self.master,
-            walletCode: (initOf SatoshiWallet(self.master, self.owner)).code
+            code: initOf SatoshiWallet(self.master, self.owner).code
         };
     }
 }

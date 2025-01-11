@@ -9,7 +9,7 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
     // https://github.com/bitcoin/bitcoin/blob/63d0b930f821132badd804822a46232a5f98bbef/src/consensus/amount.h#L26
     max_supply: Int as coins = ton("21000000");
     mintable: Bool = true;
-    totalSupply: Int as coins;
+    total_supply: Int as coins;
     owner: Address;
     content: Cell;
 
@@ -18,12 +18,10 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
     time: Int as uint32;
     attempts: Int as uint16;
 
-    override const storageReserve: Int = ton("0.045");
-
     init() {
         self.block = 0;
         self.time = now();
-        self.totalSupply = 0;
+        self.total_supply = 0;
         self.attempts = 0;
         self.owner = sender();
         self.content = beginCell().storeUint(0, 64).endCell(); // TODO: change to real content
@@ -38,44 +36,53 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
     }
 
     fun mine(receiver: Address) {
-        require(context().value >= ton("0.1"), "Insufficient value");
+        require(context().value >= ton("0.06"), "Insufficient value");
         self.attempts += 1;
-        // Check chance probability
-        let randomValue: Int = random(0, 101);
+        let randomValue: Int = random(0, 101); // max value not included
         let minutesSinceLastBlock: Int = (now() - self.time) / 60;
         let probability: Int = self.calculateBlockProbability(minutesSinceLastBlock, self.attempts);
-        if (probability >= randomValue) {
-            // Update params and send the money to the receiver
-            let blocksMined = (minutesSinceLastBlock / 10) > 1 ? (minutesSinceLastBlock / 10) : 1;
-            self.block += blocksMined;
-            self.time = now();
-            self.attempts = 0;
-            let amount = getBlockSubsidy(self.block) * blocksMined;
-            let body: StringBuilder = beginString();
-            body.append("Block #");
-            body.append(self.block.toString());
-            body.append(" mined successfully!");
-            self.mint(sender(), receiver, amount, body.toString());
-        } else {
-            self.notify("Mining failed".asComment());
+        if (probability - randomValue < 0) {
+            self.notify("Mining failed.".asComment());
+            return;
         }
+        // => probability - randomValue >= 0
+        let blocksToMine = (minutesSinceLastBlock / 10) > 1 ? (minutesSinceLastBlock / 10) : 1;
+        if (blocksToMine > 1) {
+            let halvings = blocksToMine / blockSubsidyHalvingInterval;
+            if (halvings > 0) {
+                blocksToMine += halvings * blockSubsidyHalvingInterval;
+                blocksToMine += blockSubsidyHalvingInterval - self.block;
+            }
+        }
+        let amount = getBlockSubsidy(self.block) * blocksToMine;
+        self.block += blocksToMine;
+        self.time = now();
+        self.attempts = 0;
+        self.mint(sender(), receiver, amount, self.block);
     }
 
     get fun get_mining_data(): MiningParams {
         return MiningParams{
             last_block: self.block,
             last_block_time: self.time,
-            current_subsidy: getBlockSubsidy(self.block),
             attempts: self.attempts,
-            probability: self.calculateBlockProbability(self.time, self.attempts),
+            subsidy: getBlockSubsidy(self.block+1),
+            probability: self.get_mining_probability(
+                (now() - self.time) / 60,
+                self.attempts + 1
+            ),
         };
+    }
+
+    get fun get_mining_probability(minutes: Int, attempts: Int): Int {
+        return self.calculateBlockProbability(minutes, attempts);
     }
 }
 
 struct MiningParams {
     last_block: Int as uint32;
     last_block_time: Int as uint32;
-    current_subsidy: Int as coins;
     attempts: Int as uint16;
+    subsidy: Int as coins;
     probability: Int as uint8;
 }

@@ -2,18 +2,11 @@ import "../helpers/messages.tact";
 import "../SatoshiWallet.tact";
 import "@stdlib/ownable";
 
-struct JettonData {
-    totalSupply: Int;
-    mintable: Bool;
-    owner: Address;
-    content: Cell;
-    walletCode: Cell;
-}
-
 @interface("org.ton.jetton.master")
 trait Jetton with OwnableTransferable {
+    const minTonsForStorage: Int = ton("0.06");
 
-    totalSupply: Int;
+    total_supply: Int;
     mintable: Bool;
     owner: Address;
     content: Cell;
@@ -26,8 +19,8 @@ trait Jetton with OwnableTransferable {
     }
 
     receive(msg: TokenBurnNotification) {
-        self.requireWallet(msg.owner);                     // Check wallet
-        self.totalSupply = self.totalSupply - msg.amount; // Update supply
+        self.requireWallet(msg.sender);                     // Check wallet
+        self.total_supply = self.total_supply - msg.amount; // Update supply
 
         if (msg.response_destination != null) { // Cashback
             send(SendParameters{
@@ -36,7 +29,7 @@ trait Jetton with OwnableTransferable {
                 bounce: false,
                 mode: SendRemainingValue + SendIgnoreErrors,
                 body: TokenExcesses{
-                    queryId: msg.queryId
+                    query_id: msg.query_id
                 }.toCell()
             });
         }
@@ -45,33 +38,48 @@ trait Jetton with OwnableTransferable {
     // @from The Address receive remaining value after minting
     // @to The Address receive the Jetton token after minting
     // @amount The amount of Jetton token being minted
-    // @comment The comment to be sent in the message body
-    fun mint(from: Address, to: Address, amount: Int, comment: String) {
-        require(self.totalSupply + amount <= self.max_supply, "Can't mint more than max supply");
-        self.totalSupply = self.totalSupply + amount;
+    // @block The block number
+    fun mint(from: Address, to: Address, amount: Int, block: Int) {
+        require(self.total_supply + amount <= self.max_supply, "Can't mint more than max supply");
+        self.total_supply = self.total_supply + amount;
+
+        let comment = beginString()
+            .concat("Block #")
+            .concat(block.toString())
+            .concat(" mined.")
+            .toString();
+
+        let payload = beginCell()
+            .storeUint(0, 33)
+            .storeSlice(comment.asSlice())
+            .asSlice();
 
         let winit: StateInit = self.getJettonWalletInit(to);
+
+        // Calculate costs
+        let ctx: Context = context();
+        let tonBalanceBeforeMsg: Int = myBalance() - ctx.value;
+        let storageFee: Int = max(0, self.minTonsForStorage - min(tonBalanceBeforeMsg, self.minTonsForStorage));
+        let fwdAmount: Int = 1;
+        let final: Int = ctx.value - fwdAmount - storageFee - ctx.readForwardFee();
+        require(final >= 0, "Insufficient funds for operation");
+
         send(SendParameters{
             to: contractAddress(winit),
-            value: 0,
+            value: final,
             bounce: false,
-            mode: SendRemainingValue | SendIgnoreErrors,
+            mode: SendPayGasSeparately,
             body: TokenTransferInternal{
-                queryId: 0,
+                query_id: block,
                 amount: amount,
                 from: myAddress(),
                 response_destination: from,
-                forward_ton_amount: 0,
-                forward_payload: comment.asSlice()
+                forward_ton_amount: fwdAmount,
+                forward_payload: payload
             }.toCell(),
             code: winit.code,
             data: winit.data
         });
-    }
-
-    receive("withdraw"){
-        require(sender() == self.owner, "Only owner is allowed to withdraw");
-        send(SendParameters{to: self.owner, value: 0, mode: SendRemainingBalance | SendIgnoreErrors});
     }
 
     fun requireWallet(owner: Address) {
@@ -88,11 +96,11 @@ trait Jetton with OwnableTransferable {
     get fun get_jetton_data(): JettonData {
         let code: Cell = self.getJettonWalletInit(myAddress()).code;
         return JettonData{
-            totalSupply: self.totalSupply,
+            total_supply: self.total_supply,
             mintable: self.mintable,
             owner: self.owner,
             content: self.content,
-            walletCode: code
+            wallet_code: code
         };
     }
 

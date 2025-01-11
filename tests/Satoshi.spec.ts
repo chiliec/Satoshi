@@ -1,5 +1,5 @@
 import { Blockchain, BlockchainTransaction, SandboxContract, TreasuryContract } from '@ton/sandbox'
-import { toNano } from '@ton/core'
+import { fromNano, toNano } from '@ton/core'
 import { Satoshi } from '../wrappers/Satoshi'
 import '@ton/test-utils'
 
@@ -49,7 +49,7 @@ describe('Satoshi', () => {
         const deployResult = await satoshi.send(
             deployer.getSender(),
             {
-                value: toNano('0.05'),
+                value: toNano('0.2'),
             },
             {
                 $$type: 'Deploy',
@@ -76,57 +76,109 @@ describe('Satoshi', () => {
         expect(data).toEqual({
             "$$type": "MiningParams",
             last_block: 0n,
-            current_subsidy: expectedSubsidy,
-            last_block_time: data.last_block_time,
-            attempts: data.attempts,
+            subsidy: expectedSubsidy,
             probability: data.probability,
+            attempts: data.attempts,
+            last_block_time: data.last_block_time,
         })
+    })
+
+    it('should get predictable probability', async () => {
+        const data0 = (await satoshi.getGetMiningData())
+        expect(data0.probability).toBe(1n)
+
+        incrementBlockchainTime(1 * 60)
+        const data1 = (await satoshi.getGetMiningData())
+        expect(data1.probability).toBe(10n)
+
+        incrementBlockchainTime(1 * 60)
+        const data2 = (await satoshi.getGetMiningData())
+        expect(data2.probability).toBe(20n)
+
+        incrementBlockchainTime(1 * 60)
+        const data3 = (await satoshi.getGetMiningData())
+        expect(data3.probability).toBe(30n)
+
+        incrementBlockchainTime(1 * 60)
+        const data4 = (await satoshi.getGetMiningData())
+        expect(data4.probability).toBe(40n)
+
+        incrementBlockchainTime(1 * 60)
+        const data5 = (await satoshi.getGetMiningData())
+        expect(data5.probability).toBe(50n)
+
+        incrementBlockchainTime(1 * 60)
+        const data6 = (await satoshi.getGetMiningData())
+        expect(data6.probability).toBe(60n)
+
+        incrementBlockchainTime(1 * 60)
+        const data7 = (await satoshi.getGetMiningData())
+        expect(data7.probability).toBe(70n)
+
+        incrementBlockchainTime(1 * 60)
+        const data8 = (await satoshi.getGetMiningData())
+        expect(data8.probability).toBe(80n)
+
+        incrementBlockchainTime(1 * 60)
+        const data9 = (await satoshi.getGetMiningData())
+        expect(data9.probability).toBe(90n)
+
+        incrementBlockchainTime(1 * 60)
+        const data10 = (await satoshi.getGetMiningData())
+        expect(data10.probability).toBe(100n)
+
     })
 
     it('should mine with low probability of success', async () => {
         const wallet = await randomTreasury()
         let attempts = 100
         let successCount = 0
-        let previousTotalSupply = 0n
+        let previoustotal_supply = 0n
         for (let i = 0; i < attempts; i++) {
-            incrementBlockchainTime(10)
+            incrementBlockchainTime(60 * 1)
             await mine(wallet)
-            const totalSupply = (await satoshi.getGetJettonData()).totalSupply
-            if (totalSupply > previousTotalSupply) {
+            const total_supply = (await satoshi.getGetJettonData()).total_supply
+            if (total_supply > previoustotal_supply) {
                 successCount++
             }
-            previousTotalSupply = totalSupply
+            previoustotal_supply = total_supply
         }
         const successRate = successCount / attempts
-        expect(successRate).toBeGreaterThan(0.005)
-        expect(successRate).toBeLessThanOrEqual(0.02)
+        expect(successRate).toBeGreaterThanOrEqual(0.01)
+        expect(successRate).toBeLessThanOrEqual(0.15)
     })
 
     it('should mine correctly', async () => {
-        let wallet = await randomTreasury()
-        let failedTrxs = await mine(wallet) // chance ~= 1%
-        expect((await satoshi.getGetJettonData()).totalSupply).toEqual(toNano(0))
-        expect(failedTrxs).toHaveLength(3)
+        const minProbability = (await satoshi.getGetMiningData()).probability
+        expect(minProbability).toBe(1n)
+        expect((await satoshi.getGetJettonData()).total_supply).toEqual(toNano(0))
 
         incrementBlockchainTime(60 * 10)
 
-        let successTrxs = await mine(wallet) // chance = 100%
-        expect((await satoshi.getGetJettonData()).totalSupply).toEqual(toNano(50))
-        expect(successTrxs).toHaveLength(4)
+        const maxProbability = (await satoshi.getGetMiningData()).probability
+        expect(maxProbability).toBe(100n)
+
+        let wallet = await randomTreasury()
+        let successTrxs = await mine(wallet)
+        expect((await satoshi.getGetJettonData()).total_supply).toEqual(toNano(50))
+        expect(successTrxs).toHaveLength(5)
     })
 
     it('should mine predictable with halvings', async () => {
-        const iterCount = 22
-        const iterBlocks = 10000
+        const iterCount = 300
+        const iterBlocks = 10_000
         let shouldEqualSupply = 0n
-        incrementBlockchainTime(60 * 10 * Number(iterBlocks))
         let wallet = await randomTreasury()
-        for (let i = 1; i < iterCount; i++) {
-            await mine(wallet)
-            incrementBlockchainTime(60 * 10 * Number(iterBlocks))
+        for (let i = 1; i <= iterCount; i++) {
             const miningData = await satoshi.getGetMiningData()
-            shouldEqualSupply += BigInt(iterBlocks) * miningData.current_subsidy
-            expect((await satoshi.getGetJettonData()).totalSupply).toEqual(shouldEqualSupply)
+            shouldEqualSupply += BigInt(iterBlocks) * miningData.subsidy
+            incrementBlockchainTime(60 * 10 * Number(iterBlocks))
+            await mine(wallet)
+            expect((await satoshi.getGetJettonData()).total_supply).toEqual(shouldEqualSupply)
         }
+        const tonBalance = (await blockchain.getContract(satoshi.address)).balance
+        console.log("Result balance: ", fromNano(tonBalance))
+        expect(tonBalance).toBeGreaterThan(toNano(0.001))
+        expect(tonBalance).toBeLessThan(toNano(1))
     })
 })
