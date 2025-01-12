@@ -35,6 +35,38 @@ trait Jetton with OwnableTransferable {
         }
     }
 
+    // https://github.com/ton-blockchain/TEPs/blob/master/text/0089-jetton-wallet-discovery.md
+    receive(msg: ProvideWalletAddress){
+        // 0x2c76b973
+        require(context().value >= ton("0.0061"), "Insufficient gas");
+        let init: StateInit = initOf SatoshiWallet(myAddress(), msg.owner_address);
+        if (msg.include_address) {
+            send(SendParameters{
+                    to: sender(),
+                    value: 0,
+                    mode: SendRemainingValue,
+                    body: TakeWalletAddress{
+                        query_id: msg.query_id,
+                        wallet_address: contractAddress(init),
+                        owner_address: beginCell().storeBool(true).storeAddress(msg.owner_address).endCell().asSlice()
+                    }.toCell()
+                }
+            );
+        } else {
+            send(SendParameters{
+                    to: sender(),
+                    value: 0,
+                    mode: SendRemainingValue,
+                    body: TakeWalletAddress{ // 0xd1735400
+                        query_id: msg.query_id,
+                        wallet_address: contractAddress(init),
+                        owner_address: beginCell().storeBool(false).endCell().asSlice()
+                    }.toCell()
+                }
+            );
+        }
+    }
+
     // @from The Address receive remaining value after minting
     // @to The Address receive the Jetton token after minting
     // @amount The amount of Jetton token being minted
