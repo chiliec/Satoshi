@@ -1,9 +1,10 @@
 import "../helpers/messages.tact";
-import "../SatoshiWallet.tact";
+import "../helpers/constants.tact";
+import "../JettonWallet.tact";
 import "@stdlib/ownable";
 
 @interface("org.ton.jetton.master")
-trait Jetton with OwnableTransferable {
+trait Jetton with MinterExitcodes, OwnableTransferable {
     const minTonsForStorage: Int = ton("0.06");
 
     total_supply: Int;
@@ -19,27 +20,26 @@ trait Jetton with OwnableTransferable {
     }
 
     receive(msg: TokenBurnNotification) {
-        self.requireWallet(msg.sender);                     // Check wallet
-        self.total_supply = self.total_supply - msg.amount; // Update supply
+        //Check that the message is from msg.sender's jetton_wallet
+        nativeThrowUnless(self.UnauthorizedBurn, sender() == self.getJettonWalletByOwner(msg.sender));
 
-        if (msg.response_destination != null) { // Cashback
-            send(SendParameters{
-                to: msg.response_destination!!,
-                value: 0,
-                bounce: false,
-                mode: SendRemainingValue + SendIgnoreErrors,
-                body: TokenExcesses{
-                    query_id: msg.query_id
-                }.toCell()
-            });
-        }
+        self.total_supply -= msg.amount;
+        send(SendParameters{
+            to: msg.response_destination,
+            value: 0,
+            bounce: false,
+            mode: SendRemainingValue | SendIgnoreErrors, //ignore errors, because supply already been updated
+            body: TokenExcesses{
+                query_id: msg.query_id
+            }.toCell()
+        });
     }
 
     // https://github.com/ton-blockchain/TEPs/blob/master/text/0089-jetton-wallet-discovery.md
     receive(msg: ProvideWalletAddress){
         // 0x2c76b973
         require(context().value >= ton("0.0061"), "Insufficient gas");
-        let init: StateInit = initOf SatoshiWallet(myAddress(), msg.owner_address);
+        let init: StateInit = initOf JettonWallet(myAddress(), msg.owner_address);
         if (msg.include_address) {
             send(SendParameters{
                     to: sender(),
@@ -120,8 +120,13 @@ trait Jetton with OwnableTransferable {
         require(contractAddress(winit) == ctx.sender, "Invalid sender");
     }
 
+    inline fun getJettonWalletByOwner(jetton_wallet_owner: Address): Address {
+        let jwInit: StateInit = self.getJettonWalletInit(jetton_wallet_owner);
+        return contractAddress(jwInit);
+    }
+
     virtual fun getJettonWalletInit(address: Address): StateInit {
-        return initOf SatoshiWallet(myAddress(), address);
+        return initOf JettonWallet(myAddress(), address);
     }
 
     // ====== Get Methods ====== //

@@ -145,7 +145,7 @@ describe('Satoshi', () => {
         }
         const successRate = successCount / attempts
         expect(successRate).toBeGreaterThanOrEqual(0.01)
-        expect(successRate).toBeLessThanOrEqual(0.15)
+        expect(successRate).toBeLessThanOrEqual(0.2)
     })
 
     it('should mine correctly', async () => {

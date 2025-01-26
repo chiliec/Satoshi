@@ -5,7 +5,7 @@ import "./traits/Probability.tact";
 import "./helpers/subsidy.tact";
 import "./helpers/messages.tact";
 
-contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
+contract Satoshi with Jetton, Probability, Deployable {
     // https://github.com/bitcoin/bitcoin/blob/63d0b930f821132badd804822a46232a5f98bbef/src/consensus/amount.h#L26
     max_supply: Int as coins = ton("21000000");
     mintable: Bool = true;
