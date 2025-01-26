@@ -24,7 +24,7 @@ export async function run(provider: NetworkProvider) {
     ui.write(`Last block time: ${miningData.last_block_time}\n`);
     ui.write(`Attempts: ${miningData.attempts}\n`);
     ui.write(`Subsidy: ${fromNano(miningData.subsidy)}\n`);
-    ui.write(`Probability: ${miningData.probability}\n`);
+    ui.write(`Probability: ${miningData.probability}\n\n`);
 
     const displayContent = await ui.choose('Display content?', ['Yes', 'No'], (c) => c);
     if (displayContent == 'Yes') {

@@ -35,7 +35,5 @@ export async function run(provider: NetworkProvider) {
         }
     );
 
-    await provider.waitForDeploy(satoshi.address);
-
-    console.log('Content changed for', satoshi.address);
+    console.log('Transaction to change content was sended for address', satoshi.address);
 }
