@@ -41,11 +41,10 @@ contract Satoshi with Jetton, Probability, Deployable {
         let randomValue: Int = random(0, 101); // max value not included
         let minutesSinceLastBlock: Int = (now() - self.time) / 60;
         let probability: Int = self.calculateBlockProbability(minutesSinceLastBlock, self.attempts);
-        if (probability - randomValue < 0) {
+        if randomValue > probability {
             self.notify("Mining failed.".asComment());
             return;
         }
-        // => probability - randomValue >= 0
         let blocksToMine = (minutesSinceLastBlock / 10) > 1 ? (minutesSinceLastBlock / 10) : 1;
         if (blocksToMine > 1) {
             let halvings = blocksToMine / blockSubsidyHalvingInterval;
