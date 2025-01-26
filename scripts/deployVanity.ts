@@ -19,7 +19,7 @@ export async function run(provider: NetworkProvider) {
 
     await vanity.sendDeploy(
         provider.sender(),
-        toNano('0.05'),
+        toNano('0.2'),
         code,
         data
     );

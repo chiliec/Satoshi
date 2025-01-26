@@ -8,7 +8,7 @@ contract JettonWallet with WalletExitcodes, GasConstants {
     const minTonsForStorage: Int = ton("0.015");
     const gasConsumption: Int = ton("0.015");
 
-    balance: Int as coins = 0;
+    balance: Int as coins;
     owner: Address;
     master: Address;
 
@@ -41,7 +41,7 @@ contract JettonWallet with WalletExitcodes, GasConstants {
             mode: SendRemainingValue,
             bounce: true,
             body: TokenTransferInternal {
-            query_id: msg.query_id,
+                query_id: msg.query_id,
                 amount: msg.amount,
                 from: self.owner,
                 response_destination: msg.response_destination,
@@ -126,6 +126,16 @@ contract JettonWallet with WalletExitcodes, GasConstants {
                 sender: self.owner,
                 response_destination: msg.response_destination
             }.toCell()
+        });
+    }
+
+    receive("withdraw"){
+        nativeThrowUnless(self.IncorrectSender, sender() == self.owner);
+        send(SendParameters{
+            to: sender(),
+            bounce: true,
+            value: 0,
+            mode: SendRemainingBalance + SendIgnoreErrors
         });
     }
 
