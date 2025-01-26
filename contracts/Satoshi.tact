@@ -78,11 +78,3 @@ contract Satoshi with Jetton, Probability, OwnableTransferable, Deployable {
         return self.calculateBlockProbability(minutes, attempts);
     }
 }
-
-struct MiningParams {
-    last_block: Int as uint32;
-    last_block_time: Int as uint32;
-    attempts: Int as uint16;
-    subsidy: Int as coins;
-    probability: Int as uint8;
-}
