@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satoshi Tribute Token</title>
+    <style>
+        :root {
+            --primary: #f7931a;
+            --secondary: #4a90e2;
+            --background: #1a1b1f;
+            --text: #ffffff;
+            --card-bg: #2c2d33;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        a {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .token-image {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat:last-child {
+            border-bottom: none;
+        }
+
+        .button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .title {
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .description {
+            opacity: 0.8;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="./logo_with_footer.webp" alt="Satoshi Tribute Token" class="token-image">
+            <h1 class="title">Satoshi Tribute Token</h1>
+            <p class="description">A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h2 class="title">Token Information</h2>
+                <div class="stat">
+                    <span>Symbol</span>
+                    <span>SATOSHI</span>
+                </div>
+                <div class="stat">
+                    <span>Total Supply</span>
+                    <span id="supply">Loading...</span>
+                </div>
+                <div class="stat">
+                    <span>Decimals</span>
+                    <span>9</span>
+                </div>
+                <div class="stat">
+                    <span>Rights revoked</span>
+                    <span id="rights">Loading...</span>
+                </div>
+                <div class="stat">
+                    <span>Contract</span>
+                    <span style="font-size: 12px;"><a href="https://tonviewer.com/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI" target="_blank">EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-<strong>SaToSHI</strong></a></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="title">Mining Information</h2>
+                <div class="stat">
+                    <span>Last Block</span>
+                    <span id="lastBlock">Loading...</span>
+                </div>
+                <div class="stat">
+                    <span>Attempts</span>
+                    <span id="attempts">Loading...</span>
+                </div>
+                <div class="stat">
+                    <span>Current Subsidy</span>
+                    <span id="subsidy">Loading...</span>
+                </div>
+                <div class="stat">
+                    <span>Minutes since last block</span>
+                    <span id="minutes">Loading...</span>
+                </div>
+                <div class="stat">
+                    <span>Current probability</span>
+                    <span id="probability">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="title">Start Mining</h2>
+            <form id="mineForm" onsubmit="return false;">
+                <input type="text" id="receiverAddress" placeholder="Enter another address or leave empty">
+                <button class="button" onclick="submitMining()">
+                    Mine with 0.06 TON
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function submitMining() {
+            const receiverAddress = document.getElementById('receiverAddress').value;
+            open("ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F")
+        }
+
+        // Simulated data fetching - replace with actual TON contract calls
+        function updateMiningStats() {
+            document.getElementById('lastBlock').textContent = Math.floor(Date.now() / 1000);
+            document.getElementById('attempts').textContent = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('subsidy').textContent = '50 SATOSHI';
+            document.getElementById('rights').textContent = 'No';
+            document.getElementById('supply').textContent = '39,324 ' + `(${(39324 / 21000000).toFixed(3)}%)`;
+            document.getElementById('minutes').textContent = Math.floor(Math.random() * 10000);
+            document.getElementById('probability').textContent = Math.floor(Math.random() * 100) + '%';
+        }
+
+        updateMiningStats();
+        setInterval(updateMiningStats, 30000);
+    </script>
+</body>
+</html>
