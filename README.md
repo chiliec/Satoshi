@@ -36,20 +36,12 @@ Run the following command to compile the contracts:
 ```
 npx blueprint build
 ```
-Or with Yarn:
-```
-yarn blueprint build
-```
 
 ### Test
 Run the tests with:
 ```
 npx blueprint test
 ```
-Or with Yarn:
-```
-yarn blueprint test
-```
 
 ## Join the Community
-Be part of an **innovative and decentralized future**! Contribute to the history of cryptocurrencies and pay tribute to a legend.
+Be part of an innovative and decentralized future, contribute to the history of cryptocurrencies and pay tribute to a legend. [Join our community](https://t.me/DAOthxS) on Telegram.
