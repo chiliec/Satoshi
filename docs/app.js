@@ -37,11 +37,8 @@ async function initTonConnect() {
     try {
         tonConnectUI.onStatusChange(async (wallet) => {
             const mineForm = document.getElementById('mineForm');
-            if (!mineForm) {
-                console.error('Mine form element not found');
-                return;
-            }
             mineForm.style.display = wallet ? 'block' : 'none';
+            document.getElementById('manual-buttons').style.display = wallet ? 'none' : 'block';
         });
         await tonConnectUI.connectionRestored;
         console.log('Connection restored successfully');
@@ -125,7 +122,7 @@ async function updateStats() {
         if (!jettonData) throw new Error('Failed to get jetton data');
 
         document.getElementById('supply').textContent =
-            `${formatAmount(jettonData.total_supply)} (${(formatAmount(jettonData.total_supply) / 21000000).toFixed(2)}%)`;
+            `${formatAmount(jettonData.total_supply)} (${(formatAmount(jettonData.total_supply) / 21000000).toFixed(3)}%)`;
         document.getElementById('rights').textContent =
             jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000'
                 ? 'Yes'
