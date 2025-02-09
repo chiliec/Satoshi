@@ -1,5 +1,27 @@
 # Satoshi Tribute
 
+## Contract Satoshi Tribute
+|||
+|-|-|
+|Address|[EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI](https://tonviewer.com/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?section=code)|
+|Workchain | Basic Workchain (0) |
+|Code Hash |icqUtHwmVcLNq4yWAlaOMogwG8MnufJI5B/s/MTBRmo= |
+
+## Compiler
+|Compiler|tact|
+|-|-|
+|Version|[1.5.3](https://github.com/tact-lang/tact/tree/v1.5.3)|
+|Verified on|1/27/2025|
+
+## Verification Proof
+This source code compiles to the same exact bytecode that is found on-chain, verified by a decentralized group of validators.
+
+|Status|Public Key|IP|Verification date|Verifier|
+|-|-|-|-|-|
+|✅ Verified|edaMyPS3LRFd28UVd7qP6YK1Y/JWrW4+hT+ydMO8TRY=|3.3.3.3|1/27/2025|[Proof](https://verifier.ton.org/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI)|
+|✅ Verified|0fjyUVE88fJa2IgWpNjjz6O9TC8ftFoSwb+DI1HvFM8=|3.3.3.3|1/27/2025|[Proof](https://verifier.ton.org/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI)|
+|✅ Verified|1fWcZGowOI0gTHZyTPhTX2s3iBnMSdqsNqJYCWNj0A4=|3.3.3.3|1/27/2025|[Proof](https://verifier.ton.org/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI)|
+
 ## TL;DR
 To mine $SATOSHI coins, send **0.06 TON** with the text **"F"** to the contract address `EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI` manually or using [web-interface](https://chiliec.github.io/Satoshi/).
 
