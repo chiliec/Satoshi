@@ -9,55 +9,76 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     },
 });
 
-const tonweb = new TonWeb(new TonWeb.HttpProvider('https://toncenter.com/api/v2/jsonRPC'));
+const tonweb = new TonWeb(
+    new TonWeb.HttpProvider('https://toncenter.com/api/v2/jsonRPC', {
+        // apiKey: API_KEY,
+    }),
+);
 
-const { Address, Cell } = TonWeb;
+const contractAddress = 'EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI';
 
-const contractAddress = new Address('EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI');
-
-function createMessageBody(address) {
-    const cell = new Cell();
-    cell.bits.writeUint(0xe9b94603, 32);
-    cell.bits.writeAddress(new Address(address));
-    return cell;
+function createMessageBody(addressString) {
+    try {
+        const cell = new TonWeb.boc.Cell();
+        cell.bits.writeUint(0xE9B94603, 32);
+        if (!TonWeb.utils.Address.isValid(addressString)) {
+            throw new Error('Invalid TON address format');
+        }
+        const address = new TonWeb.utils.Address(addressString);
+        cell.bits.writeAddress(address);
+        return cell;
+    } catch (error) {
+        console.error('Error in createMessageBody:', error);
+        throw new Error(`Failed to create message body: ${error.message}`);
+    }
 }
 
 async function initTonConnect() {
     try {
         tonConnectUI.onStatusChange(async (wallet) => {
-            document.getElementById('mineButton').disabled = !!!wallet;
-            document.getElementById('receiverAddress').disabled = !!!wallet;
+            const mineForm = document.getElementById('mineForm');
+            if (!mineForm) {
+                console.error('Mine form element not found');
+                return;
+            }
+            mineForm.style.display = wallet ? 'block' : 'none';
         });
         await tonConnectUI.connectionRestored;
-    } catch (e) {
-        console.error('Connection error:', e);
+        console.log('Connection restored successfully');
+    } catch (error) {
+        console.error('Connection error:', error);
+        throw new Error(`Failed to initialize TON Connect: ${error.message}`);
     }
 }
 
 async function submitMining() {
-    const walletState = await tonConnectUI.getWalletInfo();
-    if (!walletState) {
-        alert('Please connect your wallet first');
-        return;
-    }
-    const receiverAddress = document.getElementById('receiverAddress').value || walletState.account.address;
     try {
-        const messageBody = createMessageBody(receiverAddress);
+        const userAccount = tonConnectUI.account;
+        if (!userAccount) {
+            throw new Error('Wallet not connected');
+        }
+        const receiverAddress = document.getElementById('receiverAddress').value.trim() || userAccount.address;
+        const body = await createMessageBody(receiverAddress);
+        const payload = btoa(String.fromCharCode(...new Uint8Array(await body.toBoc())));
+        if (!payload) {
+            throw new Error('Failed to generate payload');
+        }
         const transaction = {
-            validUntil: Math.floor(Date.now() / 1000) + 120, // 120 seconds from now
+            validUntil: Math.floor(Date.now() / 1000) + 120,
             messages: [
                 {
-                    address: contractAddress.toString(),
+                    address: contractAddress,
                     amount: '60000000', // 0.06 TON
-                    payload: messageBody.toBoc().toString('base64'),
+                    payload: payload.toString('base64'),
                 },
             ],
         };
         const result = await tonConnectUI.sendTransaction(transaction);
-        console.log('Transaction sent:', result);
-    } catch (e) {
-        console.error('Transaction error:', e);
-        alert('Transaction failed: ' + e.message);
+        console.log('Transaction sent successfully:', result);
+    } catch (error) {
+        console.error('Transaction error:', error);
+        alert(`Transaction failed: ${error.message}`);
+        throw error;
     }
 }
 
@@ -67,7 +88,7 @@ function formatAmount(amount) {
 
 async function getJettonData() {
     try {
-        const result = await tonweb.provider.call2(contractAddress.toString(), 'get_jetton_data');
+        const result = await tonweb.provider.call2(contractAddress, 'get_jetton_data');
         return {
             total_supply: parseInt(result[0]),
             mintable: result[1],
@@ -83,7 +104,7 @@ async function getJettonData() {
 
 async function getMiningData() {
     try {
-        const result = await tonweb.provider.call2(contractAddress.toString(), 'get_mining_data');
+        const result = await tonweb.provider.call2(contractAddress, 'get_mining_data');
         return {
             last_block: parseInt(result[0]),
             last_block_time: parseInt(result[1]),
@@ -92,7 +113,7 @@ async function getMiningData() {
             probability: parseInt(result[4]),
         };
     } catch (e) {
-        console.error('Error getting jetton data:', e);
+        console.error('Error getting mining data:', e);
         return null;
     }
 }
@@ -138,6 +159,7 @@ async function updateStats() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('mineForm').style.display = 'none';
     initTonConnect();
     updateStats();
 });
