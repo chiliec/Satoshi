@@ -1,9 +1,7 @@
 # Satoshi Tribute
 
 ## TL;DR
-To mine $SATOSHI coins, send **0.06 TON** with the text **"F"** to the contract address `EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI`:
-- Tonkeeper: [https://app.tonkeeper.com/transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F](https://app.tonkeeper.com/transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F)
-- Another TON wallet: [ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F](ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F)
+To mine $SATOSHI coins, send **0.06 TON** with the text **"F"** to the contract address `EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI` manually or using [web-interface](https://chiliec.github.io/Satoshi/).
 
 ## Introduction
 Satoshi Tribute is a token created to honor **Satoshi Nakamoto**, the founder of blockchain technology. This project expresses gratitude for the revolutionary ideas that changed the financial system and brings the crypto community together around decentralization and innovation.
