@@ -6,6 +6,10 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
         uiPreferences: {
             theme: TON_CONNECT_UI.THEME.DARK,
         },
+        actionsConfiguration: {
+            returnStrategy: 'back',
+            // twaReturnUrl: 'https://t.me/our_bot?start=start',
+        },
     },
 });
 
@@ -122,7 +126,7 @@ async function updateStats() {
         if (!jettonData) throw new Error('Failed to get jetton data');
 
         document.getElementById('supply').textContent =
-            `${formatAmount(jettonData.total_supply)} (${(formatAmount(jettonData.total_supply) / 21000000).toFixed(3)}%)`;
+            `${formatAmount(jettonData.total_supply)} (${(formatAmount(jettonData.total_supply) / 21000000 * 100).toFixed(2)}%)`;
         document.getElementById('rights').textContent =
             jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000'
                 ? 'Yes'
