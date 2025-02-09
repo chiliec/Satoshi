@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Satoshi Tribute Token</title>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://unpkg.com/tonweb@latest/dist/tonweb.js"></script>
     <style>
         :root {
             --primary: #f7931a;
@@ -151,7 +153,7 @@
             <div class="card">
                 <h2 class="title">Mining Information</h2>
                 <div class="stat">
-                    <span>Last Block</span>
+                    <span>Block</span>
                     <span id="lastBlock">Loading...</span>
                 </div>
                 <div class="stat">
@@ -163,46 +165,28 @@
                     <span id="subsidy">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Minutes since last block</span>
-                    <span id="minutes">Loading...</span>
+                    <span>Current Probability</span>
+                    <span id="probability">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Current probability</span>
-                    <span id="probability">Loading...</span>
+                    <span>Minutes Since Last Block</span>
+                    <span id="minutes">Loading...</span>
                 </div>
             </div>
         </div>
-
         <div class="card">
-            <h2 class="title">Start Mining</h2>
+            <div class="mineTitle">
+                <h2 class="title">Start Mining</h2>
+                <div id="connect-button"></div>
+            </div>
             <form id="mineForm" onsubmit="return false;">
                 <input type="text" id="receiverAddress" placeholder="Enter another address or leave empty">
-                <button class="button" onclick="submitMining()">
+                <button id="mineButton" class="button" onclick="submitMining()">
                     Mine with 0.06 TON
                 </button>
             </form>
         </div>
     </div>
-
-    <script>
-        async function submitMining() {
-            const receiverAddress = document.getElementById('receiverAddress').value;
-            open("ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F")
-        }
-
-        // Simulated data fetching - replace with actual TON contract calls
-        function updateMiningStats() {
-            document.getElementById('lastBlock').textContent = Math.floor(Date.now() / 1000);
-            document.getElementById('attempts').textContent = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('subsidy').textContent = '50 SATOSHI';
-            document.getElementById('rights').textContent = 'No';
-            document.getElementById('supply').textContent = '39,324 ' + `(${(39324 / 21000000).toFixed(3)}%)`;
-            document.getElementById('minutes').textContent = Math.floor(Math.random() * 10000);
-            document.getElementById('probability').textContent = Math.floor(Math.random() * 100) + '%';
-        }
-
-        updateMiningStats();
-        setInterval(updateMiningStats, 30000);
-    </script>
+    <script src="./app.js"></script>
 </body>
 </html>

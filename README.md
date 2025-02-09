@@ -1,26 +1,54 @@
-# Satoshi
+# Satoshi Tribute
 
-## Project structure
+## TL;DR
+To mine $SATOSHI coins, send **0.06 TON** with the text **"F"** to the contract address `EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI`:
+- [Tonkeeper](https://app.tonkeeper.com/transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F)
+- [Any TON wallet](ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F)
 
--   `contracts` - source code of all the smart contracts of the project and their dependencies.
--   `wrappers` - wrapper classes (implementing `Contract` from ton-core) for the contracts, including any [de]serialization primitives and compilation functions.
--   `tests` - tests for the contracts.
--   `scripts` - scripts used by the project, mainly the deployment scripts.
+## Introduction
+Satoshi Tribute is a token created to honor **Satoshi Nakamoto**, the founder of blockchain technology. This project expresses gratitude for the revolutionary ideas that changed the financial system and brings the crypto community together around decentralization and innovation.
 
-## How to use
+## Mining
+Mining Satoshi coins is simple and fair. Send **0.06 TON** to the contract address with the text **"F"** to initiate mining. The mining probability depends on the number of attempts and the time since the last block. The probability is described in the following chart:
 
+
+- Probability **increases over time** and **decreases with the number of attempts**.
+- No extra fees, pre-mining, or hidden mechanisms: **equal opportunities for all**.
+- Every **210,000 blocks (~4 years)**, the mining reward is halved, just like Bitcoin.
+
+## Smart Contract Transparency
+- Built on **proven blockchain technology**.
+- The mining probability algorithm is **fully open-source**.
+- The code is available in the [Probability.tact](contracts/traits/Probability.tact) file for full transparency and security.
+
+## Project Structure
+- **`contracts`** - Source code of all smart contracts and dependencies.
+- **`wrappers`** - Wrapper classes for contracts, implementing `Contract` from `ton-core`.
+- **`tests`** - Test cases for the smart contracts.
+- **`scripts`** - Deployment and automation scripts.
+- **`utils`** - Utilities for scripts and UI.
+- **`docs`** - Documentation.
+
+## Smart Contract Usage
 ### Build
-
-`npx blueprint build` or `yarn blueprint build`
+Run the following command to compile the contracts:
+```
+npx blueprint build
+```
+Or with Yarn:
+```
+yarn blueprint build
+```
 
 ### Test
+Run the tests with:
+```
+npx blueprint test
+```
+Or with Yarn:
+```
+yarn blueprint test
+```
 
-`npx blueprint test` or `yarn blueprint test`
-
-### Deploy or run another script
-
-`npx blueprint run` or `yarn blueprint run`
-
-### Add a new contract
-
-`npx blueprint create ContractName` or `yarn blueprint create ContractName`
+## Join the Community
+Be part of an **innovative and decentralized future**! Contribute to the history of cryptocurrencies and pay tribute to a legend.
