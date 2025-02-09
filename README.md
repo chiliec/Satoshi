@@ -11,6 +11,7 @@ Satoshi Tribute is a token created to honor **Satoshi Nakamoto**, the founder of
 ## Mining
 Mining Satoshi coins is simple and fair. Send **0.06 TON** to the contract address with the text **"F"** to initiate mining. The mining probability depends on the number of attempts and the time since the last block. The probability is described in the following chart:
 
+![Probability vs Minutes Since Last Block](docs/figure.png)
 
 - Probability **increases over time** and **decreases with the number of attempts**.
 - No extra fees, pre-mining, or hidden mechanisms: **equal opportunities for all**.
