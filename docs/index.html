@@ -169,7 +169,6 @@
         .footer {
             text-align: center;
             padding: 24px;
-            margin-top: 40px;
             background: var(--card-bg);
             border-radius: 16px;
         }
@@ -205,6 +204,41 @@
             <h1 class="title">Satoshi Tribute Token</h1>
             <p class="description">A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.</p>
         </header>
+
+        <div class="card">
+            <div class="mineTitle">
+                <h2 class="title">Start Mining</h2>
+                <span class="wallet-buttons">
+                    <span id="manual-buttons">
+                        <a href="https://app.tonkeeper.com/transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F"
+                        class="wallet-link"
+                        target="_blank">
+                            <svg class="wallet-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 97 96" fill="none">
+                                <path fill="#45AEF5" d="M48.5 45.333 91.167 26 48.5 93.333z" opacity="0.75"/>
+                                <path fill="#45AEF5" d="M48.5 45.333 5.833 26 48.5 93.333z" opacity="0.5"/>
+                                <path fill="#45AEF5" d="M48.5 45.333 5.833 26 48.5 6.667 91.167 26z"/>
+                            </svg>
+                            Tonkeeper
+                        </a>
+                        <a href="ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F"
+                        class="wallet-link">
+                            <svg class="wallet-icon" width="24" height="24" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M28 56C43.464 56 56 43.464 56 28C56 12.536 43.464 0 28 0C12.536 0 0 12.536 0 28C0 43.464 12.536 56 28 56Z" fill="#0098EA"/>
+                                <path d="M37.5603 15.6277H18.4386C14.9228 15.6277 12.6944 19.4202 14.4632 22.4861L26.2644 42.9409C27.0345 44.2765 28.9644 44.2765 29.7345 42.9409L41.5381 22.4861C43.3045 19.4251 41.0761 15.6277 37.5627 15.6277H37.5603ZM26.2548 36.8068L23.6847 31.8327L17.4833 20.7414C17.0742 20.0315 17.5795 19.1218 18.4362 19.1218H26.2524V36.8092L26.2548 36.8068ZM38.5108 20.739L32.3118 31.8351L29.7417 36.8068V19.1194H37.5579C38.4146 19.1194 38.9199 20.0291 38.5108 20.739Z" fill="white"/>
+                            </svg>
+                            Other wallet
+                        </a>
+                    </span>
+                    <span id="connect-button"></span>
+                </span>
+            </div>
+            <form id="mineForm" onsubmit="return false;">
+                <input type="text" id="receiverAddress" placeholder="Enter another address or leave empty">
+                <button id="mineButton" class="button" onclick="submitMining()">
+                    Mine with 0.06 TON
+                </button>
+            </form>
+        </div>
 
         <div class="grid">
             <div class="card">
@@ -259,40 +293,7 @@
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="mineTitle">
-                <h2 class="title">Start Mining</h2>
-                <span class="wallet-buttons">
-                    <span id="manual-buttons">
-                        <a href="https://app.tonkeeper.com/transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F"
-                        class="wallet-link"
-                        target="_blank">
-                            <svg class="wallet-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 97 96" fill="none">
-                                <path fill="#45AEF5" d="M48.5 45.333 91.167 26 48.5 93.333z" opacity="0.75"/>
-                                <path fill="#45AEF5" d="M48.5 45.333 5.833 26 48.5 93.333z" opacity="0.5"/>
-                                <path fill="#45AEF5" d="M48.5 45.333 5.833 26 48.5 6.667 91.167 26z"/>
-                            </svg>
-                            Tonkeeper
-                        </a>
-                        <a href="ton://transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F"
-                        class="wallet-link">
-                            <svg class="wallet-icon" width="24" height="24" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M28 56C43.464 56 56 43.464 56 28C56 12.536 43.464 0 28 0C12.536 0 0 12.536 0 28C0 43.464 12.536 56 28 56Z" fill="#0098EA"/>
-                                <path d="M37.5603 15.6277H18.4386C14.9228 15.6277 12.6944 19.4202 14.4632 22.4861L26.2644 42.9409C27.0345 44.2765 28.9644 44.2765 29.7345 42.9409L41.5381 22.4861C43.3045 19.4251 41.0761 15.6277 37.5627 15.6277H37.5603ZM26.2548 36.8068L23.6847 31.8327L17.4833 20.7414C17.0742 20.0315 17.5795 19.1218 18.4362 19.1218H26.2524V36.8092L26.2548 36.8068ZM38.5108 20.739L32.3118 31.8351L29.7417 36.8068V19.1194H37.5579C38.4146 19.1194 38.9199 20.0291 38.5108 20.739Z" fill="white"/>
-                            </svg>
-                            Other wallet
-                        </a>
-                    </span>
-                    <span id="connect-button"></span>
-                </span>
-            </div>
-            <form id="mineForm" onsubmit="return false;">
-                <input type="text" id="receiverAddress" placeholder="Enter another address or leave empty">
-                <button id="mineButton" class="button" onclick="submitMining()">
-                    Mine with 0.06 TON
-                </button>
-            </form>
-        </div>
+
         <footer class="footer">
             <div class="footer-links">
                 <a href="http://github.com/chiliec/Satoshi" target="_blank" class="footer-link">Source code</a>
