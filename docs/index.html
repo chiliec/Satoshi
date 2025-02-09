@@ -165,6 +165,37 @@
             width: 24px;
             height: 24px;
         }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            margin-top: 40px;
+            background: var(--card-bg);
+            border-radius: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .footer-text {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -262,6 +293,14 @@
                 </button>
             </form>
         </div>
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="http://github.com/chiliec/Satoshi" target="_blank" class="footer-link">Source code</a>
+                <a href="https://t.me/DAOthxS" target="_blank" class="footer-link">Telegram community</a>
+                <span class="footer-link footer-text" onclick="alert('Not ready yet')">Whitepaper</span>
+                <a href="https://ton.org" target="_blank" class="footer-link">TON</a>
+            </div>
+        </footer>
     </div>
     <script src="./app.js"></script>
 </body>
