@@ -34,15 +34,35 @@ function createMessageBody() {
     }
 }
 
+async function updateMineButton(wallet) {
+    const mineButton = document.getElementById('mineButton');
+    if (wallet) {
+        mineButton.innerHTML = '<span class="button-icon">⛏️</span> Mine with 0.06 TON';
+        document.getElementById('manual-buttons').style.display = 'none';
+    } else {
+        mineButton.innerHTML = '<span class="button-icon">🔗</span> Connect Wallet';
+        document.getElementById('manual-buttons').style.display = 'block';
+    }
+}
+
 async function initTonConnect() {
     try {
         tonConnectUI.onStatusChange(async (wallet) => {
-            const mineForm = document.getElementById('mineForm');
-            mineForm.style.display = wallet ? 'block' : 'none';
-            document.getElementById('manual-buttons').style.display = wallet ? 'none' : 'block';
+            console.log('Wallet status changed:', wallet);
+            this.updateMineButton(wallet);
         });
-        await tonConnectUI.connectionRestored;
-        console.log('Connection restored successfully');
+        const isRestored = await tonConnectUI.connectionRestored;
+        if (isRestored) {
+            console.log(
+                'Connection restored. Wallet:',
+                JSON.stringify({
+                    ...tonConnectUI.wallet,
+                    ...tonConnectUI.walletInfo,
+                }),
+            );
+        } else {
+            console.log('Connection was not restored.');
+        }
     } catch (error) {
         console.error('Connection error:', error);
         throw new Error(`Failed to initialize TON Connect: ${error.message}`);
@@ -51,9 +71,11 @@ async function initTonConnect() {
 
 async function submitMining() {
     try {
-        const userAccount = tonConnectUI.account;
-        if (!userAccount) {
-            throw new Error('Wallet not connected');
+        const wallet = tonConnectUI.wallet;
+        if (!wallet) {
+            // If wallet is not connected, open the connection modal
+            tonConnectUI.openModal();
+            return;
         }
         const body = await createMessageBody();
         const payload = btoa(String.fromCharCode(...new Uint8Array(await body.toBoc())));
@@ -158,7 +180,7 @@ async function updateStats() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('mineForm').style.display = 'none';
+    updateMineButton(false);
     initTonConnect();
     updateStats();
 });
