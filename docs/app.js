@@ -101,8 +101,14 @@ async function submitMining() {
     }
 }
 
-function formatAmount(amount) {
+function fromNano(amount) {
     return TonWeb.utils.fromNano(amount.toString());
+}
+
+function formatNumber(num) {
+    return new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: 2,
+    }).format(num);
 }
 
 async function getJettonData() {
@@ -144,7 +150,7 @@ async function updateStats() {
         if (!jettonData) throw new Error('Failed to get jetton data');
 
         document.getElementById('supply').textContent =
-            `${formatAmount(jettonData.total_supply)} (${(formatAmount(jettonData.total_supply) / 21000000 * 100).toFixed(2)}%)`;
+            `${formatNumber(fromNano(jettonData.total_supply))} (${((fromNano(jettonData.total_supply) / 21000000) * 100).toFixed(2)}%)`;
         const isRevoked = jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000'
         document.getElementById('rights').textContent = isRevoked ? 'Yes' : 'No';
         document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
@@ -167,7 +173,7 @@ async function updateStats() {
         document.getElementById('attempts').textContent = miningData.attempts;
 
         const blockSubsidyHalvingInterval = 210_000;
-        document.getElementById('subsidy').textContent = formatAmount(miningData.subsidy) + ' $SATOSHI';
+        document.getElementById('subsidy').textContent = fromNano(miningData.subsidy) + ' $SATOSHI';
         document.getElementById('subsidy').title =
             miningData.last_block % blockSubsidyHalvingInterval === 0
                 ? 'Last block'
