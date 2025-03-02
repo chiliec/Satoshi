@@ -21,15 +21,12 @@ const tonweb = new TonWeb(
 
 const contractAddress = 'EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI';
 
-function createMessageBody(addressString) {
+function createMessageBody() {
     try {
         const cell = new TonWeb.boc.Cell();
-        cell.bits.writeUint(0xE9B94603, 32);
-        if (!TonWeb.utils.Address.isValid(addressString)) {
-            throw new Error('Invalid TON address format');
-        }
-        const address = new TonWeb.utils.Address(addressString);
-        cell.bits.writeAddress(address);
+        cell.bits.writeUint(0x00000000, 32);
+        const messageText = 'F';
+        cell.bits.writeString(messageText);
         return cell;
     } catch (error) {
         console.error('Error in createMessageBody:', error);
@@ -58,8 +55,7 @@ async function submitMining() {
         if (!userAccount) {
             throw new Error('Wallet not connected');
         }
-        const receiverAddress = document.getElementById('receiverAddress').value.trim() || userAccount.address;
-        const body = await createMessageBody(receiverAddress);
+        const body = await createMessageBody();
         const payload = btoa(String.fromCharCode(...new Uint8Array(await body.toBoc())));
         if (!payload) {
             throw new Error('Failed to generate payload');
@@ -127,22 +123,24 @@ async function updateStats() {
 
         document.getElementById('supply').textContent =
             `${formatAmount(jettonData.total_supply)} (${(formatAmount(jettonData.total_supply) / 21000000 * 100).toFixed(2)}%)`;
-        document.getElementById('rights').textContent =
-            jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000'
-                ? 'Yes'
-                : 'No';
+        const isRevoked = jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000'
+        document.getElementById('rights').textContent = isRevoked ? 'Yes' : 'No';
+        document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
 
         const miningData = await getMiningData();
         if (!miningData) throw new Error('Failed to get mining data');
 
         document.getElementById('lastBlock').textContent = miningData.last_block;
-        const difference = new Date() - new Date(miningData.last_block_time * 1000);
-        const minutes = Math.round(difference / 60000);
 
-        document.getElementById('minutes').textContent = pluralize(minutes, 'minute');
+        const difference = new Date() - new Date(miningData.last_block_time * 1000);
+        const minutes = Math.floor(difference / 60000);
+        const seconds = Math.floor((difference % 60000) / 1000);
+        const timeText = `${pluralize(minutes, 'minute')} ${pluralize(seconds, 'second')}`;
+        document.getElementById('time').textContent = timeText;
+
         let blocks = (minutes - (minutes % 10)) / 10;
         blocks = blocks === 0 ? 1 : blocks;
-        document.getElementById('minutes').title = pluralize(blocks, 'block');
+        document.getElementById('time').title = pluralize(blocks, 'block');
 
         document.getElementById('attempts').textContent = miningData.attempts;
 
