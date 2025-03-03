@@ -180,6 +180,9 @@ async function updateStats() {
                 : `${pluralize(blockSubsidyHalvingInterval - (miningData.last_block % blockSubsidyHalvingInterval), 'block')} to next halving`;
 
         document.getElementById('probability').textContent = miningData.probability + '%';
+
+        document.getElementById('mineButton').textContent =
+            `⛏️ Mine ${fromNano(miningData.subsidy * blocks)} $SATOSHI`;
     } catch (e) {
         console.error('Error updating data:', e);
     }
