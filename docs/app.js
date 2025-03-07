@@ -188,7 +188,44 @@ async function updateStats() {
     }
 }
 
+// i18n
+
+function setInitialLanguage() {
+    const savedLang = localStorage.getItem('satoshi-language');
+    const browserLang = navigator.language.split('-')[0];
+    const defaultLang = browserLang === 'ru' ? 'ru' : 'en';
+    const currentLang = savedLang || defaultLang;
+
+    document.getElementById('language-dropdown').value = currentLang;
+    changeLanguage(currentLang);
+}
+
+function changeLanguage(lang) {
+    localStorage.setItem('satoshi-language', lang);
+    document.documentElement.lang = lang;
+
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach((element) => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+
+    // Update loading text in dynamic elements
+    document
+        .querySelectorAll('#supply, #rights, #lastBlock, #attempts, #subsidy, #probability, #time')
+        .forEach((el) => {
+            if (el.textContent === 'Loading...') {
+                el.textContent = translations[lang]['loading'];
+            }
+        });
+
+    tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    setInitialLanguage();
     updateMineButton(false);
     initTonConnect();
     updateStats();

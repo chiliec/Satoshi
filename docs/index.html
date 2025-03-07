@@ -47,6 +47,38 @@
             text-align: center;
             margin-bottom: 40px;
             padding: 20px;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .language-dropdown {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .language-dropdown option {
+            background: var(--card-bg);
+        }
+
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 8px;
         }
 
         .token-image {
@@ -205,14 +237,20 @@
 <body>
     <div class="container">
         <header class="header">
+            <div class="language-selector">
+                <select id="language-dropdown" class="language-dropdown" onchange="changeLanguage(this.value)">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                </select>
+            </div>
             <img src="./logo_with_footer.webp" alt="Satoshi Tribute Token" class="token-image">
-            <h1 class="title">Satoshi Tribute Token</h1>
-            <p class="description">A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.</p>
+            <h1 class="title" data-i18n="pageTitle">Satoshi Tribute Token</h1>
+            <p class="description" data-i18n="pageDescription">A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.</p>
         </header>
 
         <div class="card">
             <div class="mineTitle">
-                <h2 class="title">Start Mining</h2>
+                <h2 class="title" data-i18n="startMining">Start Mining</h2>
                 <span class="wallet-buttons">
                     <span id="manual-buttons">
                         <a href="https://app.tonkeeper.com/transfer/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=60000000&text=F"
@@ -231,7 +269,7 @@
                                 <path d="M28 56C43.464 56 56 43.464 56 28C56 12.536 43.464 0 28 0C12.536 0 0 12.536 0 28C0 43.464 12.536 56 28 56Z" fill="#0098EA"/>
                                 <path d="M37.5603 15.6277H18.4386C14.9228 15.6277 12.6944 19.4202 14.4632 22.4861L26.2644 42.9409C27.0345 44.2765 28.9644 44.2765 29.7345 42.9409L41.5381 22.4861C43.3045 19.4251 41.0761 15.6277 37.5627 15.6277H37.5603ZM26.2548 36.8068L23.6847 31.8327L17.4833 20.7414C17.0742 20.0315 17.5795 19.1218 18.4362 19.1218H26.2524V36.8092L26.2548 36.8068ZM38.5108 20.739L32.3118 31.8351L29.7417 36.8068V19.1194H37.5579C38.4146 19.1194 38.9199 20.0291 38.5108 20.739Z" fill="white"/>
                             </svg>
-                            Other wallet
+                            <span data-i18n="otherWallet">Other wallet</span>
                         </a>
                     </span>
                     <span id="connect-button"></span>
@@ -239,32 +277,32 @@
             </div>
             <form id="mineForm" onsubmit="return false;">
                 <button id="mineButton" class="button" onclick="submitMining()">
-                    ⛏️ Mine with 0.06 TON
+                    ⛏️ <span data-i18n="mineWithTon">Mine with 0.06 TON</span>
                 </button>
             </form>
         </div>
 
         <div class="grid">
             <div class="card">
-                <h2 class="title">Token Information</h2>
+                <h2 class="title" data-i18n="tokenInfo">Token Information</h2>
                 <div class="stat">
-                    <span>Symbol</span>
+                    <span data-i18n="symbol">Symbol</span>
                     <span>SATOSHI</span>
                 </div>
                 <div class="stat">
-                    <span>Total Supply</span>
+                    <span data-i18n="totalSupply">Total Supply</span>
                     <span id="supply">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Decimals</span>
+                    <span data-i18n="decimals">Decimals</span>
                     <span>9</span>
                 </div>
                 <div class="stat">
-                    <span>Rights revoked</span>
+                    <span data-i18n="rightsRevoked">Rights revoked</span>
                     <span id="rights">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Contract</span>
+                    <span data-i18n="contract">Contract</span>
                     <span class="contract-link">
                         <a href="https://tonviewer.com/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI" target="_blank">
                             EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-<strong>SaToSHI</strong>
@@ -274,25 +312,25 @@
             </div>
 
             <div class="card">
-                <h2 class="title">Mining Information</h2>
+                <h2 class="title" data-i18n="miningInfo">Mining Information</h2>
                 <div class="stat">
-                    <span>Block</span>
+                    <span data-i18n="block">Block</span>
                     <span id="lastBlock">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Attempts</span>
+                    <span data-i18n="attempts">Attempts</span>
                     <span id="attempts">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Current Subsidy</span>
+                    <span data-i18n="currentSubsidy">Current Subsidy</span>
                     <span id="subsidy">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Current Probability</span>
+                    <span data-i18n="currentProbability">Current Probability</span>
                     <span id="probability">Loading...</span>
                 </div>
                 <div class="stat">
-                    <span>Time Since Last Block</span>
+                    <span data-i18n="timeSinceLastBlock">Time Since Last Block</span>
                     <span id="time">Loading...</span>
                 </div>
             </div>
@@ -300,14 +338,15 @@
 
         <footer class="footer">
             <div class="footer-links">
-                <a href="http://github.com/chiliec/Satoshi" target="_blank" class="footer-link">Source code</a>
-                <a href="https://t.me/satoshiNotify" target="_blank" class="footer-link">Mining notifications</a>
-                <a href="https://t.me/DAOthxS" target="_blank" class="footer-link">Community</a>
-                <a href="https://chiliec.github.io/Satoshi/whitepaper.html" target="_blank" class="footer-link">Whitepaper</a>
+                <a href="http://github.com/chiliec/Satoshi" target="_blank" class="footer-link" data-i18n="sourceCode">Source code</a>
+                <a href="https://t.me/satoshiNotify" target="_blank" class="footer-link" data-i18n="miningNotifications">Mining notifications</a>
+                <a href="https://t.me/DAOthxS" target="_blank" class="footer-link" data-i18n="community">Community</a>
+                <a href="https://chiliec.github.io/Satoshi/whitepaper.html" target="_blank" class="footer-link" data-i18n="whitepaper">Whitepaper</a>
                 <a href="https://ton.org" target="_blank" class="footer-link">TON</a>
             </div>
         </footer>
     </div>
+    <script src="./translations.js"></script>
     <script src="./app.js"></script>
 </body>
 </html>
