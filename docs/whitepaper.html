@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satoshi Tribute: A Peer-to-Peer Electronic Meme-Coin Currency</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.5;
+            color: #222;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .author {
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .abstract {
+            font-style: italic;
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+        .reference {
+            margin-top: 40px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+        .equation {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .figure {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .figure img {
+            max-width: 100%;
+        }
+        .caption {
+            font-style: italic;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Satoshi Tribute: A Peer-to-Peer Electronic Meme-Coin Currency</h1>
+
+    <div class="abstract">
+        <strong>Abstract.</strong> A purely peer-to-peer version of electronic meme currency has been designed, paying homage to Bitcoin's original vision while introducing innovative on-chain mining mechanics through a novel "Proof of Transaction" consensus mechanism. The Satoshi Tribute token implements Bitcoin's exact tokenomics model with a maximum supply of 21 million tokens and a halving schedule identical to Bitcoin's, ensuring predictable emission and fair distribution. By leveraging The Open Network (TON) blockchain for transaction processing, we eliminate the energy consumption concerns of traditional proof-of-work systems while maintaining decentralized token distribution. No pre-mining, no team allocations, and no venture capital investments guarantee that all tokens are distributed fairly to the community through on-chain mining activities, preventing the possibility of rug-pulls or centralized control.
+    </div>
+
+    <h2>1. Introduction</h2>
+    <p>
+        The cryptocurrency ecosystem has evolved significantly since the introduction of Bitcoin by Satoshi Nakamoto in 2008. While Bitcoin established the foundational principles of decentralized currency, many subsequent projects have deviated from these principles, often prioritizing speculative value over utility and fair distribution.
+    </p>
+    <p>
+        Satoshi Tribute aims to return to these first principles by implementing a token with distribution mechanics that honor Bitcoin's original vision. The project combines the proven tokenomics model of Bitcoin with modern blockchain technology, creating a token that is both a tribute to Bitcoin's pioneering design and an evolution in token distribution methods.
+    </p>
+
+    <h2>2. Tokenomics</h2>
+    <p>
+        Satoshi Tribute adopts Bitcoin's exact tokenomics model:
+    </p>
+    <p>
+        <strong>Maximum Supply:</strong> 21,000,000 tokens<br />
+        <strong>Initial Block Reward:</strong> 50 tokens<br />
+        <strong>Halving Interval:</strong> Every 210,000 blocks<br />
+        <strong>Target Block Time:</strong> 10 minutes
+    </p>
+    <p>
+        This creates an attenuating emission schedule identical to Bitcoin's, providing predictable scarcity and a decelerating inflation rate. The token emission can be mathematically expressed as:
+    </p>
+    <div class="equation">
+        Total Supply = ∑<sub>n=0</sub><sup>33</sup> (50 × 2<sup>-⌊n/210000⌋</sup>) ≈ 21,000,000
+    </div>
+    <p>
+        Where n represents the block number and ⌊x⌋ is the floor function. This formula ensures that approximately 21 million tokens will ever exist, with rewards halving every 210,000 blocks (approximately 4 years at 10-minute intervals).
+    </p>
+
+    <h2>3. Proof of Transaction Mechanism</h2>
+    <p>
+        Rather than employing the energy-intensive Proof of Work (PoW) mechanism used by Bitcoin, Satoshi Tribute introduces a novel "Proof of Transaction" (PoT) consensus mechanism. This approach maintains the distributed nature of mining while eliminating excessive energy consumption.
+    </p>
+    <p>
+        The mining process functions as follows:
+    </p>
+    <p>
+        1. Users initiate a transaction on the TON blockchain, costing 0.06 TON for gas fees.<br />
+        2. The transaction serves as a mining attempt, with the chance of successfully mining a block determined by a probability function.<br />
+        3. If the mining attempt fails, the gas fee is returned to the user.<br />
+        4. If the mining attempt succeeds, the user receives the block reward in Satoshi Tribute tokens.
+    </p>
+    <p>
+        The probability of successfully mining a block is governed by two factors:
+    </p>
+    <div class="equation">
+        P(success) = f(t) × g(n)
+    </div>
+    <p>
+        Where:
+    </p>
+    <p>
+        • f(t) is an increasing function of time since the last successful block<br />
+        • g(n) is a decreasing function of the number of attempts made by all users since the last successful block
+    </p>
+    <p>
+        This dual function ensures that blocks are discovered approximately every 10 minutes, regardless of network activity. As more mining attempts are made without success, the probability decreases, preventing spamming. Conversely, as time passes without a successful block, the probability increases, ensuring blocks are eventually mined even with low network activity.
+    </p>
+
+    <h2>4. On-Chain Mining Implementation</h2>
+    <p>
+        The on-chain mining implementation is built on TON's smart contract capabilities, allowing for a transparent and verifiable mining process:
+    </p>
+    <p>
+        1. A master contract tracks the global state, including current block height, last block time, and cumulative mining attempts.<br />
+        2. When a user initiates a mining transaction, the contract:
+            <br />&nbsp;&nbsp;a. Verifies the transaction meets minimum requirements
+            <br />&nbsp;&nbsp;b. Calculates the mining probability based on current network conditions
+            <br />&nbsp;&nbsp;c. Generates pseudorandomness from transaction data and block hash
+            <br />&nbsp;&nbsp;d. Determines mining success based on the calculated probability
+            <br />&nbsp;&nbsp;e. Issues rewards or returns gas fees accordingly
+    </p>
+    <p>
+        This implementation ensures that all mining activity occurs transparently on-chain, allowing anyone to verify the fairness of the distribution process.
+    </p>
+
+    <h2>5. Fair Distribution Guarantee</h2>
+    <p>
+        Satoshi Tribute implements multiple mechanisms to ensure fair token distribution:
+    </p>
+    <p>
+        <strong>No Pre-mine:</strong> Unlike many token projects, Satoshi Tribute has no pre-mined tokens. All tokens enter circulation through the mining process.<br />
+        <strong>No Team Allocation:</strong> There is no token allocation for the development team or founders.<br />
+        <strong>No VC Investment:</strong> No tokens are reserved for venture capital or early investors.<br />
+        <strong>No Special Requirements:</strong> Mining is accessible to anyone with a TON wallet, without requiring special hardware or large capital investments.
+    </p>
+    <p>
+        These guarantees ensure that Satoshi Tribute tokens are distributed solely based on participation in the network, preventing centralization of token ownership and the possibility of rug-pulls or market manipulation by insiders.
+    </p>
+
+    <h2>6. TON Blockchain Integration</h2>
+    <p>
+        Satoshi Tribute leverages The Open Network (TON) blockchain for several key advantages:
+    </p>
+    <p>
+        <strong>Scalability:</strong> TON's high transaction throughput enables smooth operation of the mining mechanism even with high participation.<br />
+        <strong>Low Transaction Costs:</strong> The 0.06 TON gas fee for mining attempts is minimal, making mining accessible to a wide range of participants.<br />
+        <strong>Validator Incentives:</strong> As Satoshi Tribute grows in popularity, TON validators benefit from increased transaction volume, creating a symbiotic relationship between the token and the underlying blockchain.
+    </p>
+    <p>
+        The integration with TON also provides enhanced security through the blockchain's well-established validator network, ensuring transaction finality and resistance to various attack vectors.
+    </p>
+
+    <h2>7. Network Economics</h2>
+    <p>
+        The Satoshi Tribute economic model creates several positive feedback loops:
+    </p>
+    <p>
+        1. As more users participate in mining, TON network activity increases, benefiting validators.<br />
+        2. As token value increases, more users are incentivized to participate in mining, further distributing tokens.<br />
+        3. The fixed maximum supply and halving schedule create natural scarcity over time, potentially preserving long-term value.
+    </p>
+    <p>
+        This economic design aligns incentives across all participants in the ecosystem, from miners to validators to token holders, promoting sustainable growth rather than short-term speculation.
+    </p>
+
+    <h2>8. Security Considerations</h2>
+    <p>
+        The security of the Satoshi Tribute protocol relies on several properties:
+    </p>
+    <p>
+        <strong>Transparent Randomness:</strong> The mining success determination uses transparent on-chain randomness derived from transaction data and block hashes.<br />
+        <strong>Anti-Spam Mechanisms:</strong> The decreasing probability function for repeated attempts prevents denial-of-service attacks through mining spam.<br />
+        <strong>Smart Contract Auditing:</strong> All contracts governing the mining and token mechanics undergo thorough security auditing before deployment.
+    </p>
+    <p>
+        Additionally, the dependency on TON blockchain provides inheritance of the security guarantees of the underlying network, including its consensus mechanism and validator security.
+    </p>
+
+    <h2>9. Conclusion</h2>
+    <p>
+        Satoshi Tribute represents a return to the core principles of fair token distribution and predictable token economics that made Bitcoin revolutionary. By combining Bitcoin's proven tokenomics with an innovative Proof of Transaction mechanism, we create a token that honors Satoshi Nakamoto's original vision while addressing modern concerns about energy consumption and token distribution fairness.
+    </p>
+    <p>
+        The project demonstrates that it is possible to create a meme token with genuine technical innovation and fair distribution principles, moving beyond the manipulative practices often associated with the category. Through this approach, Satoshi Tribute aims to become not just a tribute to Bitcoin in name, but in spirit as well—a truly peer-to-peer electronic currency accessible to all.
+    </p>
+
+    <div class="reference">
+        <h2>References</h2>
+        <p>
+            [1] Nakamoto, S. (2008). "Bitcoin: A Peer-to-Peer Electronic Cash System" <a href="https://bitcoin.org/bitcoin.pdf" target="_blank">[PDF]</a><br />
+            [2] Buterin, V. (2014). "A Next-Generation Smart Contract and Decentralized Application Platform" <a href="https://ethereum.org/content/whitepaper/whitepaper-pdf/Ethereum_Whitepaper_-_Buterin_2014.pdf" target="_blank">[PDF]</a><br />
+            [3] Business Perspectives (2019). Fair market value of bitcoin: halving effect <a href="https://www.businessperspectives.org/index.php/journals?controller=pdfview&task=download&item_id=12700" target="_blank">[PDF]</a><br />
+            [4] TON Blockchain Documentation (2021). "The Open Network Technical Whitepaper" <a href="https://ton.org/whitepaper.pdf" target="_blank">[PDF]</a><br />
+        </p>
+    </div>
+</body>
+</html>
