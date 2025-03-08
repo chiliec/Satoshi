@@ -38,10 +38,8 @@ async function updateMineButton(wallet) {
     const mineButton = document.getElementById('mineButton');
     if (wallet) {
         mineButton.innerHTML = '<span class="button-icon">⛏️</span> Mine with 0.06 TON';
-        document.getElementById('manual-buttons').style.display = 'none';
     } else {
         mineButton.innerHTML = '<span class="button-icon">🔗</span> Connect Wallet';
-        document.getElementById('manual-buttons').style.display = 'block';
     }
 }
 
