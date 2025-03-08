@@ -5,7 +5,7 @@ const translations = {
             "A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.",
         startMining: 'Mining',
         otherWallet: 'Other wallet',
-        mineWithTon: 'Mine with 0.06 TON',
+        mineWithTon: 'Press F',
         tokenInfo: 'Token Information',
         symbol: 'Symbol',
         totalSupply: 'Total Supply',
@@ -23,13 +23,17 @@ const translations = {
         community: 'Community',
         whitepaper: 'Whitepaper',
         loading: 'Loading...',
+        shareWithFriend: 'Share with friend',
+        shareText: 'Look! I found meme-coin with on-chain mining',
+        miningDescription:
+            'By pressing F, you have a ≈100% {chance} to mine {reward} $SATOSHI tokens for a cost of 0.06 TON',
     },
     ru: {
         pageTitle: 'Satoshi Tribute Токен',
         pageDescription: 'Дань уважения наследию Сатоши Накамото. Нажмите F и выразите почтение создателю Биткоина.',
         startMining: 'Майнинг',
         otherWallet: 'Другой кошелек',
-        mineWithTon: 'Майнить за 0.06 TON',
+        mineWithTon: 'Нажать F',
         tokenInfo: 'Информация о токене',
         symbol: 'Символ',
         totalSupply: 'Общее предложение',
@@ -47,6 +51,10 @@ const translations = {
         community: 'Сообщество',
         whitepaper: 'Белая книга',
         loading: 'Загрузка...',
+        shareWithFriend: 'Поделиться с другом',
+        shareText: 'Зацени! Я нашел мем-коин с он-чейн майнингом',
+        miningDescription:
+            'При нажатии F, вы получаете ≈{chance}% шанс намайнить {reward} $SATOSHI при стоимости 0.06 TON',
     },
     // Hindi (India)
     hi: {
@@ -54,7 +62,7 @@ const translations = {
         pageDescription: 'सतोशी नाकामोतो की विरासत को श्रद्धांजलि। F दबाएं और बिटकॉइन के निर्माता को सम्मान दें।',
         startMining: 'माइनिंग',
         otherWallet: 'अन्य वॉलेट',
-        mineWithTon: '0.06 TON के साथ माइन करें',
+        mineWithTon: 'F दबाएं',
         tokenInfo: 'टोकन जानकारी',
         symbol: 'प्रतीक',
         totalSupply: 'कुल आपूर्ति',
@@ -72,6 +80,10 @@ const translations = {
         community: 'समुदाय',
         whitepaper: 'श्वेतपत्र',
         loading: 'लोड हो रहा है...',
+        shareWithFriend: 'मित्र के साथ साझा करें',
+        shareText: 'देखो! मुझे ऑन-चेन माइनिंग वाला मीम-कॉइन मिला',
+        miningDescription:
+            'F दबाने पर, आपको 0.06 TON की लागत से {reward} $SATOSHI टोकन माइन करने का ≈{chance}% मौका मिलता है',
     },
     // Indonesian (Indonesia)
     id: {
@@ -80,7 +92,7 @@ const translations = {
             'Penghormatan untuk warisan Satoshi Nakamoto. Tekan F dan berikan penghormatan kepada pencipta Bitcoin.',
         startMining: 'Menambang',
         otherWallet: 'Dompet lain',
-        mineWithTon: 'Tambang dengan 0.06 TON',
+        mineWithTon: 'Tekan F',
         tokenInfo: 'Informasi Token',
         symbol: 'Simbol',
         totalSupply: 'Total Pasokan',
@@ -98,6 +110,10 @@ const translations = {
         community: 'Komunitas',
         whitepaper: 'Whitepaper',
         loading: 'Memuat...',
+        shareWithFriend: 'Bagikan dengan teman',
+        shareText: 'Lihat! Saya menemukan meme-coin dengan penambangan on-chain',
+        miningDescription:
+            'Dengan menekan F, Anda memiliki peluang ≈{chance}% untuk menambang {reward} token $SATOSHI dengan biaya 0.06 TON',
     },
     // Portuguese (Brazil)
     pt: {
@@ -106,7 +122,7 @@ const translations = {
             'Uma homenagem ao legado de Satoshi Nakamoto. Pressione F e preste suas homenagens ao criador do Bitcoin.',
         startMining: 'Mineração',
         otherWallet: 'Outra carteira',
-        mineWithTon: 'Minerar com 0.06 TON',
+        mineWithTon: 'Pressione F',
         tokenInfo: 'Informações do Token',
         symbol: 'Símbolo',
         totalSupply: 'Fornecimento Total',
@@ -124,6 +140,10 @@ const translations = {
         community: 'Comunidade',
         whitepaper: 'Whitepaper',
         loading: 'Carregando...',
+        shareWithFriend: 'Compartilhar com amigo',
+        shareText: 'Olha! Encontrei uma meme-coin com mineração on-chain',
+        miningDescription:
+            'Ao pressionar F, você tem ≈{chance}% de chance de minerar {reward} tokens $SATOSHI por um custo de 0.06 TON',
     },
     // Arabic (Egypt)
     ar: {
@@ -131,7 +151,7 @@ const translations = {
         pageDescription: 'تكريماً لإرث ساتوشي ناكاموتو. اضغط F وقدم احترامك لمبتكر البيتكوين.',
         startMining: 'التعدين',
         otherWallet: 'محفظة أخرى',
-        mineWithTon: 'التعدين باستخدام 0.06 تون',
+        mineWithTon: 'اضغط F',
         tokenInfo: 'معلومات الرمز',
         symbol: 'الرمز',
         totalSupply: 'إجمالي العرض',
@@ -149,6 +169,9 @@ const translations = {
         community: 'المجتمع',
         whitepaper: 'الورقة البيضاء',
         loading: 'جاري التحميل...',
+        shareWithFriend: 'مشاركة مع صديق',
+        shareText: 'انظر! لقد وجدت عملة ميم مع تعدين على السلسلة',
+        miningDescription: 'بالضغط على F، لديك فرصة ≈{chance}% لتعدين {reward} من رموز $SATOSHI بتكلفة 0.06 TON',
     },
     // Italian (Italy)
     it: {
@@ -156,7 +179,7 @@ const translations = {
         pageDescription: "Un tributo all'eredità di Satoshi Nakamoto. Premi F e rendi omaggio al creatore di Bitcoin.",
         startMining: 'Mining',
         otherWallet: 'Altro wallet',
-        mineWithTon: 'Mina con 0.06 TON',
+        mineWithTon: 'Premi F',
         tokenInfo: 'Informazioni Token',
         symbol: 'Simbolo',
         totalSupply: 'Offerta Totale',
@@ -174,6 +197,10 @@ const translations = {
         community: 'Comunità',
         whitepaper: 'Whitepaper',
         loading: 'Caricamento...',
+        shareWithFriend: 'Condividi con un amico',
+        shareText: 'Guarda! Ho trovato una meme-coin con mining on-chain',
+        miningDescription:
+            'Premendo F, hai una probabilità del ≈{chance}% di minare {reward} token $SATOSHI a un costo di 0.06 TON',
     },
     // French (France)
     fr: {
@@ -182,7 +209,7 @@ const translations = {
             "Un hommage à l'héritage de Satoshi Nakamoto. Appuyez sur F et rendez hommage au créateur du Bitcoin.",
         startMining: 'Minage',
         otherWallet: 'Autre portefeuille',
-        mineWithTon: 'Miner avec 0.06 TON',
+        mineWithTon: 'Appuyez sur F',
         tokenInfo: 'Informations sur le Token',
         symbol: 'Symbole',
         totalSupply: 'Offre Totale',
@@ -200,6 +227,10 @@ const translations = {
         community: 'Communauté',
         whitepaper: 'Livre blanc',
         loading: 'Chargement...',
+        shareWithFriend: 'Partager avec un ami',
+        shareText: "Regarde! J'ai trouvé une meme-coin avec du minage on-chain",
+        miningDescription:
+            'En appuyant sur F, vous avez ≈{chance}% de chance de miner {reward} tokens $SATOSHI pour un coût de 0.06 TON',
     },
     // German (Germany)
     de: {
@@ -208,7 +239,7 @@ const translations = {
             'Eine Hommage an das Vermächtnis von Satoshi Nakamoto. Drücken Sie F und zollen Sie dem Schöpfer von Bitcoin Respekt.',
         startMining: 'Mining',
         otherWallet: 'Anderes Wallet',
-        mineWithTon: 'Mit 0.06 TON minen',
+        mineWithTon: 'Drücken Sie F',
         tokenInfo: 'Token-Informationen',
         symbol: 'Symbol',
         totalSupply: 'Gesamtangebot',
@@ -226,5 +257,9 @@ const translations = {
         community: 'Gemeinschaft',
         whitepaper: 'Whitepaper',
         loading: 'Wird geladen...',
+        shareWithFriend: 'Mit Freund teilen',
+        shareText: 'Schau mal! Ich habe einen Meme-Coin mit On-Chain-Mining gefunden',
+        miningDescription:
+            'Durch Drücken von F haben Sie eine ≈{chance}%-Chance, {reward} $SATOSHI-Token für 0.06 TON zu minen',
     },
 };

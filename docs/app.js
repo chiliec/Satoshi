@@ -34,20 +34,10 @@ function createMessageBody() {
     }
 }
 
-async function updateMineButton(wallet) {
-    const mineButton = document.getElementById('mineButton');
-    if (wallet) {
-        mineButton.innerHTML = '<span class="button-icon">⛏️</span> Mine with 0.06 TON';
-    } else {
-        mineButton.innerHTML = '<span class="button-icon">🔗</span> Connect Wallet';
-    }
-}
-
 async function initTonConnect() {
     try {
         tonConnectUI.onStatusChange(async (wallet) => {
             console.log('Wallet status changed:', wallet);
-            this.updateMineButton(wallet);
         });
         const isRestored = await tonConnectUI.connectionRestored;
         if (isRestored) {
@@ -179,8 +169,10 @@ async function updateStats() {
 
         document.getElementById('probability').textContent = miningData.probability + '%';
 
-        document.getElementById('mineButton').textContent =
-            `⛏️ Mine ${fromNano(miningData.subsidy * blocks)} $SATOSHI`;
+        const miningDescription = document.getElementsByClassName('mining-description')[0];
+        miningDescription.innerHTML = miningDescription.innerHTML.replace('{chance}', miningData.probability);
+        miningDescription.innerHTML = miningDescription.innerHTML.replace('{reward}', fromNano(miningData.subsidy * blocks));
+        miningDescription.style.display = 'block';
     } catch (e) {
         console.error('Error updating data:', e);
     }
@@ -230,9 +222,22 @@ function changeLanguage(lang) {
     tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
 }
 
+function shareWithFriend() {
+    const currentUrl = window.location.href;
+    const currentLang = document.documentElement.lang;
+
+    let shareText = translations[currentLang].shareText || translations['en'].shareText || '';
+    // shareText = shareText + ' ' + currentUrl;
+
+    const encodedUrl = encodeURIComponent(currentUrl);
+    const encodedText = encodeURIComponent(shareText);
+
+    const shareUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+    window.open(shareUrl, '_blank');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setInitialLanguage();
-    updateMineButton(false);
     initTonConnect();
     updateStats();
 });
