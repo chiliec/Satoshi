@@ -193,11 +193,19 @@ async function updateStats() {
 function setInitialLanguage() {
     const savedLang = localStorage.getItem('satoshi-language');
     const browserLang = navigator.language.split('-')[0];
-    const defaultLang = browserLang === 'ru' ? 'ru' : 'en';
-    const currentLang = savedLang || defaultLang;
 
-    document.getElementById('language-dropdown').value = currentLang;
-    changeLanguage(currentLang);
+    if (savedLang && translations[savedLang]) {
+        document.getElementById('language-dropdown').value = savedLang;
+        changeLanguage(savedLang);
+        return;
+    }
+    if (translations[browserLang]) {
+        document.getElementById('language-dropdown').value = browserLang;
+        changeLanguage(browserLang);
+        return;
+    }
+    document.getElementById('language-dropdown').value = 'en';
+    changeLanguage('en');
 }
 
 function changeLanguage(lang) {
