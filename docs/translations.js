@@ -3,7 +3,7 @@ const translations = {
         pageTitle: 'Satoshi Tribute Token',
         pageDescription:
             "A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.",
-        startMining: 'Start Mining',
+        startMining: 'Mining',
         otherWallet: 'Other wallet',
         mineWithTon: 'Mine with 0.06 TON',
         tokenInfo: 'Token Information',
@@ -27,7 +27,7 @@ const translations = {
     ru: {
         pageTitle: 'Satoshi Tribute Токен',
         pageDescription: 'Дань уважения наследию Сатоши Накамото. Нажмите F и выразите почтение создателю Биткоина.',
-        startMining: 'Начать майнинг',
+        startMining: 'Майнинг',
         otherWallet: 'Другой кошелек',
         mineWithTon: 'Майнить за 0.06 TON',
         tokenInfo: 'Информация о токене',
@@ -52,7 +52,7 @@ const translations = {
     hi: {
         pageTitle: 'सतोशी श्रद्धांजलि टोकन',
         pageDescription: 'सतोशी नाकामोतो की विरासत को श्रद्धांजलि। F दबाएं और बिटकॉइन के निर्माता को सम्मान दें।',
-        startMining: 'माइनिंग शुरू करें',
+        startMining: 'माइनिंग',
         otherWallet: 'अन्य वॉलेट',
         mineWithTon: '0.06 TON के साथ माइन करें',
         tokenInfo: 'टोकन जानकारी',
@@ -78,7 +78,7 @@ const translations = {
         pageTitle: 'Token Penghormatan Satoshi',
         pageDescription:
             'Penghormatan untuk warisan Satoshi Nakamoto. Tekan F dan berikan penghormatan kepada pencipta Bitcoin.',
-        startMining: 'Mulai Menambang',
+        startMining: 'Menambang',
         otherWallet: 'Dompet lain',
         mineWithTon: 'Tambang dengan 0.06 TON',
         tokenInfo: 'Informasi Token',
@@ -104,7 +104,7 @@ const translations = {
         pageTitle: 'Token de Tributo a Satoshi',
         pageDescription:
             'Uma homenagem ao legado de Satoshi Nakamoto. Pressione F e preste suas homenagens ao criador do Bitcoin.',
-        startMining: 'Iniciar Mineração',
+        startMining: 'Mineração',
         otherWallet: 'Outra carteira',
         mineWithTon: 'Minerar com 0.06 TON',
         tokenInfo: 'Informações do Token',
@@ -129,7 +129,7 @@ const translations = {
     ar: {
         pageTitle: 'رمز تكريم ساتوشي',
         pageDescription: 'تكريماً لإرث ساتوشي ناكاموتو. اضغط F وقدم احترامك لمبتكر البيتكوين.',
-        startMining: 'بدء التعدين',
+        startMining: 'التعدين',
         otherWallet: 'محفظة أخرى',
         mineWithTon: 'التعدين باستخدام 0.06 تون',
         tokenInfo: 'معلومات الرمز',
@@ -154,7 +154,7 @@ const translations = {
     it: {
         pageTitle: 'Token Tributo a Satoshi',
         pageDescription: "Un tributo all'eredità di Satoshi Nakamoto. Premi F e rendi omaggio al creatore di Bitcoin.",
-        startMining: 'Inizia il Mining',
+        startMining: 'Mining',
         otherWallet: 'Altro wallet',
         mineWithTon: 'Mina con 0.06 TON',
         tokenInfo: 'Informazioni Token',
@@ -180,7 +180,7 @@ const translations = {
         pageTitle: 'Token Hommage à Satoshi',
         pageDescription:
             "Un hommage à l'héritage de Satoshi Nakamoto. Appuyez sur F et rendez hommage au créateur du Bitcoin.",
-        startMining: 'Commencer le Minage',
+        startMining: 'Minage',
         otherWallet: 'Autre portefeuille',
         mineWithTon: 'Miner avec 0.06 TON',
         tokenInfo: 'Informations sur le Token',
@@ -206,7 +206,7 @@ const translations = {
         pageTitle: 'Satoshi Tribut-Token',
         pageDescription:
             'Eine Hommage an das Vermächtnis von Satoshi Nakamoto. Drücken Sie F und zollen Sie dem Schöpfer von Bitcoin Respekt.',
-        startMining: 'Mining starten',
+        startMining: 'Mining',
         otherWallet: 'Anderes Wallet',
         mineWithTon: 'Mit 0.06 TON minen',
         tokenInfo: 'Token-Informationen',
