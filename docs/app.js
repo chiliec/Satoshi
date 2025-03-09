@@ -99,73 +99,89 @@ function formatNumber(num) {
     }).format(num);
 }
 
-async function getJettonData() {
-    try {
-        const result = await tonweb.provider.call2(contractAddress, 'get_jetton_data');
-        return {
-            total_supply: parseInt(result[0]),
-            mintable: result[1],
-            admin_address: result[2],
-            content: result[3],
-            wallet_code: result[4],
-        };
-    } catch (e) {
-        console.error('Error getting jetton data:', e);
-        return null;
+async function getJettonData(maxRetries = 10, retryDelay = 1000) {
+    let retries = 0;
+
+    while (retries <= maxRetries) {
+        try {
+            const result = await tonweb.provider.call2(contractAddress, 'get_jetton_data');
+            return {
+                total_supply: parseInt(result[0]),
+                mintable: result[1],
+                admin_address: result[2],
+                content: result[3],
+                wallet_code: result[4],
+            };
+        } catch (e) {
+            retries++;
+            if (retries > maxRetries) {
+                console.error('Error getting jetton data after maximum retries:', e);
+                return null;
+            }
+            console.warn(`Jetton data fetch attempt ${retries} failed, retrying in ${retryDelay}ms...`);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+            retryDelay *= 2;
+        }
     }
 }
 
-async function getMiningData() {
-    try {
-        const result = await tonweb.provider.call2(contractAddress, 'get_mining_data');
-        return {
-            last_block: parseInt(result[0]),
-            last_block_time: parseInt(result[1]),
-            attempts: parseInt(result[2]),
-            subsidy: parseInt(result[3]),
-            probability: parseInt(result[4]),
-        };
-    } catch (e) {
-        console.error('Error getting mining data:', e);
-        return null;
+async function getMiningData(maxRetries = 10, retryDelay = 1000) {
+    let retries = 0;
+
+    while (retries <= maxRetries) {
+        try {
+            const result = await tonweb.provider.call2(contractAddress, 'get_mining_data');
+            return {
+                last_block: parseInt(result[0]),
+                last_block_time: parseInt(result[1]),
+                attempts: parseInt(result[2]),
+                subsidy: parseInt(result[3]),
+                probability: parseInt(result[4]),
+            };
+        } catch (e) {
+            retries++;
+            if (retries > maxRetries) {
+                console.error('Error getting mining data after maximum retries:', e);
+                return null;
+            }
+            console.warn(`Mining data fetch attempt ${retries} failed, retrying in ${retryDelay}ms...`);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+            retryDelay *= 2;
+        }
     }
 }
 
 let miningData = null;
 
 async function updateStats() {
-    try {
-        const jettonData = await getJettonData();
-        if (!jettonData) throw new Error('Failed to get jetton data');
-
-        document.getElementById('supply').textContent =
-            `${formatNumber(fromNano(jettonData.total_supply))} (${((fromNano(jettonData.total_supply) / 21000000) * 100).toFixed(2)}%)`;
-        const isRevoked = jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000'
-        document.getElementById('rights').textContent = isRevoked ? 'Yes' : 'No';
-        document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
-
-        miningData = await getMiningData();
-        await updateMiningDescription();
-    } catch (e) {
-        console.error('Error updating data:', e);
-    }
+    await updateJettonData();
+    await updateMiningData();
 }
 
-async function updateMiningDescription() {
+async function updateJettonData() {
+    const jettonData = await getJettonData();
+    if (!jettonData) {
+        return
+    }
+    document.getElementById('supply').textContent =
+        `${formatNumber(fromNano(jettonData.total_supply))} (${((fromNano(jettonData.total_supply) / 21000000) * 100).toFixed(2)}%)`;
+    const isRevoked = jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000';
+    document.getElementById('rights').textContent = isRevoked ? 'Yes' : 'No';
+    document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
+}
+
+async function updateMiningData() {
     const pluralize = (count, noun, suffix = 's') => `${count} ${noun}${count !== 1 ? suffix : ''}`;
+
+    miningData = await getMiningData();
     if (!miningData) {
-        miningData = await getMiningData();
-    };
-    if (!miningData) throw new Error('Failed to get mining data');
+        return
+    }
 
     document.getElementById('lastBlock').textContent = miningData.last_block;
 
     const difference = new Date() - new Date(miningData.last_block_time * 1000);
     const minutes = Math.floor(difference / 60000);
-
-    let blocks = (minutes - (minutes % 10)) / 10;
-    blocks = blocks === 0 ? 1 : blocks;
-    document.getElementById('time').title = pluralize(blocks, 'block');
 
     document.getElementById('attempts').textContent = miningData.attempts;
 
@@ -178,6 +194,8 @@ async function updateMiningDescription() {
 
     document.getElementById('probability').textContent = miningData.probability + '%';
 
+    let blocks = (minutes - (minutes % 10)) / 10;
+    blocks = blocks === 0 ? 1 : blocks;
     const miningDescription = document.getElementsByClassName('mining-description')[0];
     miningDescription.innerHTML = miningDescription.innerHTML.replace('{chance}', miningData.probability);
     miningDescription.innerHTML = miningDescription.innerHTML.replace('{reward}', fromNano(miningData.subsidy * blocks));
@@ -242,15 +260,19 @@ function changeLanguage(lang) {
         });
 
     tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
-    updateMiningDescription().catch(console.error);
+    updateStats().catch(console.error);
 }
 
 function shareWithFriend() {
     const currentUrl = window.location.href;
     const currentLang = document.documentElement.lang;
 
-    let shareText = translations[currentLang].shareText || translations['en'].shareText || '';
-    // shareText = shareText + ' ' + currentUrl;
+    let shareText = translations[currentLang].shareText || translations['en'].shareText;
+
+    if (!shareText) {
+        alert('Share text is not defined');
+        return;
+    }
 
     const encodedUrl = encodeURIComponent(currentUrl);
     const encodedText = encodeURIComponent(shareText);
@@ -264,7 +286,9 @@ function runAtStartOfEveryMinute(callback) {
     const timeUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
     setTimeout(() => {
         callback();
-        setInterval(callback, 60000);
+        setInterval(() => {
+            callback();
+        }, 60000);
     }, timeUntilNextMinute);
 }
 
