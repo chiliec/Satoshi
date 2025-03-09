@@ -145,8 +145,6 @@ async function updateStats() {
         document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
 
         miningData = await getMiningData();
-        if (!miningData) throw new Error('Failed to get mining data');
-
         await updateMiningDescription();
     } catch (e) {
         console.error('Error updating data:', e);
@@ -158,6 +156,8 @@ async function updateMiningDescription() {
     if (!miningData) {
         miningData = await getMiningData();
     };
+    if (!miningData) throw new Error('Failed to get mining data');
+
     document.getElementById('lastBlock').textContent = miningData.last_block;
 
     const difference = new Date() - new Date(miningData.last_block_time * 1000);
