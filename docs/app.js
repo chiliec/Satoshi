@@ -154,8 +154,7 @@ async function getMiningData(maxRetries = 10, retryDelay = 1000) {
 let miningData = null;
 
 async function updateStats() {
-    await updateJettonData();
-    await updateMiningData();
+    await Promise.all([updateMiningData(), updateJettonData()]);
 }
 
 async function updateJettonData() {
