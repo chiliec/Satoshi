@@ -24,9 +24,9 @@ const translations = {
         whitepaper: 'Whitepaper',
         loading: 'Loading...',
         shareWithFriend: 'Share with friend',
-        shareText: 'Look! I found meme-coin with on-chain mining',
+        shareText: 'Look! I found a meme-coin with on-chain mining',
         miningDescription:
-            'By pressing F, you have a ≈{chance}%  to mine {reward} $SATOSHI tokens for a cost of 0.06 TON',
+            'By pressing F, you have a ≈{chance}% chance to mine {reward} $SATOSHI tokens for a cost of 0.06 TON',
     },
     ru: {
         pageTitle: 'Satoshi Tribute Токен',
@@ -55,6 +55,34 @@ const translations = {
         shareText: 'Зацени! Мем-коин с он-чейн майнингом',
         miningDescription:
             'При нажатии F, вы получаете ≈{chance}% шанс намайнить {reward} $SATOSHI при стоимости 0.06 TON',
+    },
+    // Chinese (Simplified)
+    zh: {
+        pageTitle: '中本聪致敬代币',
+        pageDescription: '向中本聪的遗产致敬。按下F键，向比特币创始人表达敬意。',
+        startMining: '挖矿',
+        otherWallet: '其他钱包',
+        mineWithTon: '按下F键',
+        tokenInfo: '代币信息',
+        symbol: '符号',
+        totalSupply: '总供应量',
+        decimals: '小数位',
+        rightsRevoked: '权利已撤销',
+        contract: '合约',
+        miningInfo: '挖矿信息',
+        block: '区块',
+        attempts: '尝试次数',
+        currentSubsidy: '当前奖励',
+        currentProbability: '当前概率',
+        timeSinceLastBlock: '自上一区块以来的时间',
+        sourceCode: '源代码',
+        miningNotifications: '挖矿通知',
+        community: '社区',
+        whitepaper: '白皮书',
+        loading: '加载中...',
+        shareWithFriend: '与朋友分享',
+        shareText: '看！我发现了一个带有链上挖矿的迷因币',
+        miningDescription: '按下F键，您有≈{chance}%的机会以0.06 TON的成本挖到{reward}个$SATOSHI代币',
     },
     // Hindi (India)
     hi: {
