@@ -26,7 +26,7 @@ const translations = {
         shareWithFriend: 'Share with friend',
         shareText: 'Look! I found meme-coin with on-chain mining',
         miningDescription:
-            'By pressing F, you have a ≈100% {chance} to mine {reward} $SATOSHI tokens for a cost of 0.06 TON',
+            'By pressing F, you have a ≈{chance}%  to mine {reward} $SATOSHI tokens for a cost of 0.06 TON',
     },
     ru: {
         pageTitle: 'Satoshi Tribute Токен',
