@@ -159,7 +159,8 @@ async function updateStats() {
         const blockTimeMs = miningData.last_block_time * 1000;
         const now = Date.now();
         const timeSinceBlock = now - blockTimeMs;
-        const msToNextMinute = 60000 - (timeSinceBlock % 60000);
+        const delay = 10000;
+        const msToNextMinute = 60000 - (timeSinceBlock % 60000) + delay;
         window.updateStatsTimeout = setTimeout(updateStats, msToNextMinute);
     }
 }
