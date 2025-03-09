@@ -236,8 +236,18 @@ function shareWithFriend() {
     window.open(shareUrl, '_blank');
 }
 
+function runAtStartOfEveryMinute(callback) {
+    const now = new Date();
+    const timeUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+    setTimeout(() => {
+        callback();
+        setInterval(callback, 60000);
+    }, timeUntilNextMinute);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setInitialLanguage();
     initTonConnect();
     updateStats();
+    runAtStartOfEveryMinute(updateStats);
 });
