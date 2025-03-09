@@ -262,7 +262,6 @@ function changeLanguage(lang) {
         }
     });
 
-    // Update loading text in dynamic elements
     document
         .querySelectorAll('#supply, #rights, #lastBlock, #attempts, #subsidy, #probability, #time')
         .forEach((el) => {
@@ -270,6 +269,7 @@ function changeLanguage(lang) {
                 el.textContent = translations[lang]['loading'];
             }
         });
+    document.title = translations[lang].pageTitle ?? translations['en'].pageTitle;
 
     tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
     updateStats().catch(console.error);
