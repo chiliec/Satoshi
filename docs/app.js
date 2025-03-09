@@ -197,8 +197,9 @@ async function updateMiningData() {
     let blocks = (minutes - (minutes % 10)) / 10;
     blocks = blocks === 0 ? 1 : blocks;
     const miningDescription = document.getElementsByClassName('mining-description')[0];
-    miningDescription.innerHTML = miningDescription.innerHTML.replace('{chance}', miningData.probability);
-    miningDescription.innerHTML = miningDescription.innerHTML.replace('{reward}', fromNano(miningData.subsidy * blocks));
+    miningDescription.innerHTML = translations[document.documentElement.lang].miningDescription
+        .replace('{chance}', miningData.probability)
+        .replace('{reward}', fromNano(miningData.subsidy * blocks));
     miningDescription.style.display = 'block';
 }
 
