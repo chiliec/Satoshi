@@ -151,6 +151,17 @@ async function getMiningData(maxRetries = 10, retryDelay = 1000) {
 
 async function updateStats() {
     await Promise.all([updateMiningData(), updateJettonData()]);
+
+    if (miningData && miningData.last_block_time) {
+        if (window.updateStatsTimeout) {
+            clearTimeout(window.updateStatsTimeout);
+        }
+        const blockTimeMs = miningData.last_block_time * 1000;
+        const now = Date.now();
+        const timeSinceBlock = now - blockTimeMs;
+        const msToNextMinute = 60000 - (timeSinceBlock % 60000);
+        window.updateStatsTimeout = setTimeout(updateStats, msToNextMinute);
+    }
 }
 
 async function updateJettonData() {
@@ -161,7 +172,7 @@ async function updateJettonData() {
     document.getElementById('supply').textContent =
         `${formatNumber(fromNano(jettonData.total_supply))} (${((fromNano(jettonData.total_supply) / 21000000) * 100).toFixed(2)}%)`;
     const isRevoked = jettonData.admin_address === '0:0000000000000000000000000000000000000000000000000000000000000000';
-    document.getElementById('rights').textContent = isRevoked ? 'Yes' : 'No';
+    document.getElementById('rights').textContent = isRevoked ? '✅' : '❌';
     document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
 }
 
@@ -281,21 +292,9 @@ function shareWithFriend() {
     window.open(shareUrl, '_blank');
 }
 
-function runAtStartOfEveryMinute(callback) {
-    const now = new Date();
-    const timeUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
-    setTimeout(() => {
-        callback();
-        setInterval(() => {
-            callback();
-        }, 60000);
-    }, timeUntilNextMinute);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     setInitialLanguage();
     initTonConnect();
     updateStats();
-    runAtStartOfEveryMinute(updateStats);
     setInterval(updateTimer, 100);
 });
