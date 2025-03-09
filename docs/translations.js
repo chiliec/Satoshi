@@ -52,7 +52,7 @@ const translations = {
         whitepaper: 'Белая книга',
         loading: 'Загрузка...',
         shareWithFriend: 'Поделиться с другом',
-        shareText: 'Зацени! Я нашел мем-коин с он-чейн майнингом',
+        shareText: 'Зацени! Мем-коин с он-чейн майнингом',
         miningDescription:
             'При нажатии F, вы получаете ≈{chance}% шанс намайнить {reward} $SATOSHI при стоимости 0.06 TON',
     },
