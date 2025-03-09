@@ -134,7 +134,6 @@ async function getMiningData() {
 let miningData = null;
 
 async function updateStats() {
-    const pluralize = (count, noun, suffix = 's') => `${count} ${noun}${count !== 1 ? suffix : ''}`;
     try {
         const jettonData = await getJettonData();
         if (!jettonData) throw new Error('Failed to get jetton data');
@@ -148,33 +147,41 @@ async function updateStats() {
         miningData = await getMiningData();
         if (!miningData) throw new Error('Failed to get mining data');
 
-        document.getElementById('lastBlock').textContent = miningData.last_block;
-
-        const difference = new Date() - new Date(miningData.last_block_time * 1000);
-        const minutes = Math.floor(difference / 60000);
-
-        let blocks = (minutes - (minutes % 10)) / 10;
-        blocks = blocks === 0 ? 1 : blocks;
-        document.getElementById('time').title = pluralize(blocks, 'block');
-
-        document.getElementById('attempts').textContent = miningData.attempts;
-
-        const blockSubsidyHalvingInterval = 210_000;
-        document.getElementById('subsidy').textContent = fromNano(miningData.subsidy) + ' $SATOSHI';
-        document.getElementById('subsidy').title =
-            miningData.last_block % blockSubsidyHalvingInterval === 0
-                ? 'Last block'
-                : `${pluralize(blockSubsidyHalvingInterval - (miningData.last_block % blockSubsidyHalvingInterval), 'block')} to next halving`;
-
-        document.getElementById('probability').textContent = miningData.probability + '%';
-
-        const miningDescription = document.getElementsByClassName('mining-description')[0];
-        miningDescription.innerHTML = miningDescription.innerHTML.replace('{chance}', miningData.probability);
-        miningDescription.innerHTML = miningDescription.innerHTML.replace('{reward}', fromNano(miningData.subsidy * blocks));
-        miningDescription.style.display = 'block';
+        await updateMiningDescription();
     } catch (e) {
         console.error('Error updating data:', e);
     }
+}
+
+async function updateMiningDescription() {
+    const pluralize = (count, noun, suffix = 's') => `${count} ${noun}${count !== 1 ? suffix : ''}`;
+    if (!miningData) {
+        miningData = await getMiningData();
+    };
+    document.getElementById('lastBlock').textContent = miningData.last_block;
+
+    const difference = new Date() - new Date(miningData.last_block_time * 1000);
+    const minutes = Math.floor(difference / 60000);
+
+    let blocks = (minutes - (minutes % 10)) / 10;
+    blocks = blocks === 0 ? 1 : blocks;
+    document.getElementById('time').title = pluralize(blocks, 'block');
+
+    document.getElementById('attempts').textContent = miningData.attempts;
+
+    const blockSubsidyHalvingInterval = 210_000;
+    document.getElementById('subsidy').textContent = fromNano(miningData.subsidy) + ' $SATOSHI';
+    document.getElementById('subsidy').title =
+        miningData.last_block % blockSubsidyHalvingInterval === 0
+            ? 'Last block'
+            : `${pluralize(blockSubsidyHalvingInterval - (miningData.last_block % blockSubsidyHalvingInterval), 'block')} to next halving`;
+
+    document.getElementById('probability').textContent = miningData.probability + '%';
+
+    const miningDescription = document.getElementsByClassName('mining-description')[0];
+    miningDescription.innerHTML = miningDescription.innerHTML.replace('{chance}', miningData.probability);
+    miningDescription.innerHTML = miningDescription.innerHTML.replace('{reward}', fromNano(miningData.subsidy * blocks));
+    miningDescription.style.display = 'block';
 }
 
 function updateTimer() {
@@ -235,6 +242,7 @@ function changeLanguage(lang) {
         });
 
     tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
+    updateMiningDescription().catch(console.error);
 }
 
 function shareWithFriend() {
