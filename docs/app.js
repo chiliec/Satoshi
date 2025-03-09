@@ -101,7 +101,6 @@ function formatNumber(num) {
 
 async function getJettonData(maxRetries = 10, retryDelay = 1000) {
     let retries = 0;
-
     while (retries <= maxRetries) {
         try {
             const result = await tonweb.provider.call2(contractAddress, 'get_jetton_data');
@@ -127,7 +126,6 @@ async function getJettonData(maxRetries = 10, retryDelay = 1000) {
 
 async function getMiningData(maxRetries = 10, retryDelay = 1000) {
     let retries = 0;
-
     while (retries <= maxRetries) {
         try {
             const result = await tonweb.provider.call2(contractAddress, 'get_mining_data');
@@ -151,8 +149,6 @@ async function getMiningData(maxRetries = 10, retryDelay = 1000) {
     }
 }
 
-let miningData = null;
-
 async function updateStats() {
     await Promise.all([updateMiningData(), updateJettonData()]);
 }
@@ -169,8 +165,13 @@ async function updateJettonData() {
     document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
 }
 
+let miningData = null;
+
 async function updateMiningData() {
     const pluralize = (count, noun, suffix = 's') => `${count} ${noun}${count !== 1 ? suffix : ''}`;
+
+    const miningDescription = document.getElementsByClassName('mining-description')[0];
+    miningDescription.style.display = 'none';
 
     miningData = await getMiningData();
     if (!miningData) {
@@ -195,7 +196,6 @@ async function updateMiningData() {
 
     let blocks = (minutes - (minutes % 10)) / 10;
     blocks = blocks === 0 ? 1 : blocks;
-    const miningDescription = document.getElementsByClassName('mining-description')[0];
     miningDescription.innerHTML = translations[document.documentElement.lang].miningDescription
         .replace('{chance}', miningData.probability)
         .replace('{reward}', fromNano(miningData.subsidy * blocks));
