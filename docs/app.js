@@ -131,6 +131,8 @@ async function getMiningData() {
     }
 }
 
+let miningData = null;
+
 async function updateStats() {
     const pluralize = (count, noun, suffix = 's') => `${count} ${noun}${count !== 1 ? suffix : ''}`;
     try {
@@ -143,16 +145,13 @@ async function updateStats() {
         document.getElementById('rights').textContent = isRevoked ? 'Yes' : 'No';
         document.getElementById('rights').title = isRevoked ? '' : 'Will be revoked soon';
 
-        const miningData = await getMiningData();
+        miningData = await getMiningData();
         if (!miningData) throw new Error('Failed to get mining data');
 
         document.getElementById('lastBlock').textContent = miningData.last_block;
 
         const difference = new Date() - new Date(miningData.last_block_time * 1000);
         const minutes = Math.floor(difference / 60000);
-        const seconds = Math.floor((difference % 60000) / 1000);
-        const timeText = `${pluralize(minutes, 'minute')} ${pluralize(seconds, 'second')}`;
-        document.getElementById('time').textContent = timeText;
 
         let blocks = (minutes - (minutes % 10)) / 10;
         blocks = blocks === 0 ? 1 : blocks;
@@ -176,6 +175,22 @@ async function updateStats() {
     } catch (e) {
         console.error('Error updating data:', e);
     }
+}
+
+function updateTimer() {
+    if (!miningData) return;
+    const difference = new Date() - new Date(miningData.last_block_time * 1000);
+    const hours = Math.floor(difference / 3600000);
+    const minutes = Math.floor((difference % 3600000) / 60000);
+    const seconds = Math.floor((difference % 60000) / 1000);
+
+    let timeText;
+    if (hours > 0) {
+        timeText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
+        timeText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    document.getElementById('time').textContent = timeText;
 }
 
 // i18n
@@ -250,4 +265,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initTonConnect();
     updateStats();
     runAtStartOfEveryMinute(updateStats);
+    setInterval(updateTimer, 100);
 });
