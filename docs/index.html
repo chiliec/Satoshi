@@ -241,9 +241,46 @@
             text-align: center;
             display: none;
         }
+
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            overflow: hidden;
+            display: none;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            animation: loading-animation 2s ease-in-out infinite;
+        }
+
+        @keyframes loading-animation {
+            0% {
+                width: 0%;
+                margin-left: 0%;
+            }
+            50% {
+                width: 50%;
+                margin-left: 25%;
+            }
+            100% {
+                width: 0%;
+                margin-left: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+    <div id="loading-indicator" class="loading-container">
+        <div class="loading-bar"></div>
+    </div>
     <div class="container">
         <header class="header">
             <div class="language-selector">
@@ -347,6 +384,7 @@
             </div>
         </footer>
     </div>
+    <script src="./loading.js"></script>
     <script src="./translations.js"></script>
     <script src="./app.js"></script>
 </body>

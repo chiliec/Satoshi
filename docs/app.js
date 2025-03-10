@@ -182,9 +182,6 @@ let miningData = null;
 async function updateMiningData() {
     const pluralize = (count, noun, suffix = 's') => `${count} ${noun}${count !== 1 ? suffix : ''}`;
 
-    const miningDescription = document.getElementsByClassName('mining-description')[0];
-    miningDescription.style.display = 'none';
-
     miningData = await getMiningData();
     if (!miningData) {
         return
@@ -208,9 +205,12 @@ async function updateMiningData() {
 
     let blocks = (minutes - (minutes % 10)) / 10;
     blocks = blocks === 0 ? 1 : blocks;
-    miningDescription.innerHTML = translations[document.documentElement.lang].miningDescription
+
+    const description = translations[document.documentElement.lang].miningDescription
         .replace('{chance}', miningData.probability)
         .replace('{reward}', fromNano(miningData.subsidy * blocks));
+    const miningDescription = document.getElementsByClassName('mining-description')[0];
+    miningDescription.innerHTML = description;
     miningDescription.style.display = 'block';
 }
 
@@ -251,6 +251,9 @@ function setInitialLanguage() {
 }
 
 function changeLanguage(lang) {
+    const miningDescription = document.getElementsByClassName('mining-description')[0];
+    miningDescription.style.display = 'none';
+
     localStorage.setItem('satoshi-language', lang);
     document.documentElement.lang = lang;
 
