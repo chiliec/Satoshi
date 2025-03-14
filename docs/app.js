@@ -168,7 +168,7 @@ async function updateStats() {
 async function updateJettonData() {
     const jettonData = await getJettonData();
     if (!jettonData) {
-        return
+        return;
     }
     document.getElementById('supply').textContent =
         `${formatNumber(fromNano(jettonData.total_supply))} (${((fromNano(jettonData.total_supply) / 21000000) * 100).toFixed(2)}%)`;
@@ -184,7 +184,7 @@ async function updateMiningData() {
 
     miningData = await getMiningData();
     if (!miningData) {
-        return
+        return;
     }
 
     document.getElementById('lastBlock').textContent = miningData.last_block;
@@ -274,7 +274,7 @@ function changeLanguage(lang) {
         });
     document.title = translations[lang].pageTitle ?? translations['en'].pageTitle;
 
-    tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
+    tonConnectUI.uiOptions = { ...tonConnectUI.uiOptions, language: lang };
     updateStats().catch(console.error);
     fixLanguageDetection();
 }
