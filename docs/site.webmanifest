@@ -1,11 +1,22 @@
 {
+    "id": "io.github.chiliec.Satoshi",
     "name": "Satoshi Tribute",
     "short_name": "SATOSHI",
+    "description": "A tribute to Satoshi Nakamoto's legacy.",
     "icons": [
-        { "src": "https://chiliec.github.io/Satoshi/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-        { "src": "https://chiliec.github.io/Satoshi/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+        {
+            "src": "https://chiliec.github.io/Satoshi/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://chiliec.github.io/Satoshi/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
     ],
     "theme_color": "#1a1b1f",
     "background_color": "#f7931a",
+    "orientation": "any",
     "display": "standalone"
 }

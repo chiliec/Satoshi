@@ -276,6 +276,21 @@ function changeLanguage(lang) {
 
     tonConnectUI.uiOptions = {...tonConnectUI.uiOptions, language: lang};
     updateStats().catch(console.error);
+    fixLanguageDetection();
+}
+
+function fixLanguageDetection() {
+    Object.defineProperty(navigator, 'language', {
+        get: () => document.documentElement.lang,
+        configurable: true,
+    });
+    // Recreate the component
+    const oldComponent = document.getElementById('pwa-install');
+    if (!oldComponent) return;
+    oldComponent.remove();
+    const newComponent = document.createElement('pwa-install');
+    newComponent.setAttribute('manifest-url', './site.webmanifest');
+    document.body.appendChild(newComponent);
 }
 
 function shareWithFriend() {

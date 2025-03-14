@@ -11,6 +11,7 @@
     <title>Satoshi Tribute Token</title>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src="https://unpkg.com/tonweb@latest/dist/tonweb.js"></script>
+    <script type="module" src="https://unpkg.com/@khmyznikov/pwa-install@0.5.3/dist/pwa-install.bundle.js"></script>
     <style>
         :root {
             --primary: #f7931a;
@@ -383,6 +384,7 @@
                 <a href="javascript:shareWithFriend();" class="footer-link" data-i18n="shareWithFriend">Share with friend</a>
             </div>
         </footer>
+        <pwa-install manifest-url="./site.webmanifest"></pwa-install>
     </div>
     <script src="./loading.js"></script>
     <script src="./translations.js"></script>
