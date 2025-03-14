@@ -316,4 +316,96 @@ document.addEventListener('DOMContentLoaded', () => {
     initTonConnect();
     updateStats();
     setInterval(updateTimer, 100);
+
+    // Glitch effects
+    const logo = document.querySelector('.token-image');
+    let isGlitching = false;
+
+    function createGlitch(intensity = 1) {
+        if (isGlitching) return;
+        isGlitching = true;
+
+        // Save the original state
+        const originalTransform = logo.style.transform;
+        const originalFilter = logo.style.filter;
+
+        // Number of glitch frames
+        const glitchFrames = Math.floor(2 + Math.random() * 2);
+        let frameCount = 0;
+
+        // Create a sequence of glitch frames
+        const glitchSequence = setInterval(() => {
+            frameCount++;
+
+            // Simple transform effects - just horizontal shift and slight rotation
+            const xShift = (Math.random() - 0.5) * 6 * intensity;
+            const rotation = (Math.random() - 0.5) * 1.5 * intensity;
+            logo.style.transform = `translateX(${xShift}px) rotate(${rotation}deg)`;
+
+            // Simple filter effect - just brightness change
+            const brightness = 1 + (Math.random() - 0.5) * 0.3 * intensity;
+            logo.style.filter = `brightness(${brightness})`;
+
+            // End the sequence after the planned number of frames
+            if (frameCount >= glitchFrames) {
+                clearInterval(glitchSequence);
+
+                // Restore original state
+                logo.style.transform = originalTransform;
+                logo.style.filter = originalFilter;
+
+                // Allow new glitches after a short delay
+                setTimeout(() => {
+                    isGlitching = false;
+                }, 100);
+            }
+        }, 100);
+    }
+
+    // Randomly trigger glitch effect
+    function randomGlitch() {
+        if (Math.random() < 0.15) {
+            // 15% chance to glitch
+            createGlitch(Math.random() * 0.5 + 0.7); // Random intensity
+        }
+    }
+
+    // Set up glitch triggers
+    function setupGlitches() {
+        // Check if the device is potentially older
+        const isOlderDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+
+        // Set glitch frequency based on device capability
+        const glitchFrequency = isOlderDevice ? 5000 : 2500;
+
+        // Random background glitches
+        setInterval(randomGlitch, glitchFrequency);
+
+        // Tap/click glitch trigger
+        logo.addEventListener('click', function () {
+            if (!isGlitching) {
+                createGlitch(1);
+            }
+        });
+
+        // Touch support for mobile
+        logo.addEventListener('touchstart', function () {
+            if (!isGlitching) {
+                createGlitch(1);
+            }
+        });
+
+        // F key trigger
+        document.addEventListener('keydown', function (e) {
+            if (e.key.toLowerCase() === 'f' && !isGlitching) {
+                createGlitch(1.2);
+            }
+        });
+    }
+
+    // Initialize glitch effect
+    setupGlitches();
+
+    // Add transition for smoother effect
+    logo.style.transition = 'filter 0.08s linear, transform 0.08s linear';
 });

@@ -9,9 +9,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
     <link rel="manifest" href="./site.webmanifest">
     <title>Satoshi Tribute Token</title>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <script src="https://unpkg.com/tonweb@latest/dist/tonweb.js"></script>
-    <script type="module" src="https://unpkg.com/@khmyznikov/pwa-install@0.5.3/dist/pwa-install.bundle.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js" defer></script>
+    <script src="https://unpkg.com/tonweb@latest/dist/tonweb.js" defer></script>
+    <script type="module" src="https://unpkg.com/@khmyznikov/pwa-install@0.5.3/dist/pwa-install.bundle.js" defer></script>
     <style>
         :root {
             --primary: #f7931a;
@@ -26,6 +26,19 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        *::selection {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        *::-moz-selection {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        *::-webkit-selection {
+            background: var(--secondary);
+            color: var(--primary);
         }
 
         body {
@@ -88,6 +101,11 @@
             border-radius: 50%;
             margin: 20px auto;
             display: block;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
         }
 
         .card {
@@ -386,8 +404,8 @@
         </footer>
         <pwa-install id="pwa-install" manifest-url="./site.webmanifest"></pwa-install>
     </div>
-    <script src="./loading.js"></script>
-    <script src="./translations.js"></script>
-    <script src="./app.js"></script>
+    <script src="./loading.js" defer></script>
+    <script src="./translations.js" defer></script>
+    <script src="./app.js" defer></script>
 </body>
 </html>
