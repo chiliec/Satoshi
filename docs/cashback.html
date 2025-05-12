@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
+        <link rel="manifest" href="./site.webmanifest" />
+        <title>Cashback</title>
+        <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+        <script src="https://unpkg.com/tonweb@latest/dist/tonweb.js"></script>
+        <style>
+            :root {
+                --primary: #f7931a;
+                --secondary: #4a90e2;
+                --background: #1a1b1f;
+                --text: #ffffff;
+                --card-bg: #2c2d33;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            }
+
+            body {
+                background-color: var(--background);
+                color: var(--text);
+                line-height: 1.6;
+                padding: 20px;
+            }
+
+            a {
+                color: var(--primary);
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .header {
+                text-align: center;
+                margin-bottom: 40px;
+                padding: 20px;
+                position: relative;
+            }
+
+            .language-selector {
+                position: absolute;
+                top: 0;
+                right: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .language-dropdown {
+                background: var(--card-bg);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: var(--text);
+                padding: 8px 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                outline: none;
+            }
+
+            .language-dropdown option {
+                background: var(--card-bg);
+            }
+
+            .card {
+                background: var(--card-bg);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .title {
+                color: var(--primary);
+                margin-bottom: 16px;
+            }
+
+            .description {
+                opacity: 0.8;
+                margin-bottom: 24px;
+            }
+
+            .wallet-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .button {
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: bold;
+                width: 100%;
+                transition: opacity 0.2s;
+            }
+
+            .button:hover:not(:disabled) {
+                opacity: 0.9;
+            }
+
+            .button:disabled {
+                background: #777;
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+
+            .wallet-info {
+                padding: 15px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+
+            .balance-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .balance-item:last-child {
+                border-bottom: none;
+            }
+
+            .loading-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: rgba(255, 255, 255, 0.1);
+                z-index: 1000;
+                overflow: hidden;
+                display: none;
+            }
+
+            .loading-bar {
+                height: 100%;
+                width: 0%;
+                background-color: var(--primary);
+                animation: loading-animation 2s ease-in-out infinite;
+            }
+
+            @keyframes loading-animation {
+                0% {
+                    width: 0%;
+                    margin-left: 0%;
+                }
+                50% {
+                    width: 50%;
+                    margin-left: 25%;
+                }
+                100% {
+                    width: 0%;
+                    margin-left: 100%;
+                }
+            }
+
+            .status-message {
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 8px;
+                text-align: center;
+                display: none;
+            }
+
+            .status-success {
+                background-color: rgba(39, 174, 96, 0.2);
+                color: #2ecc71;
+            }
+
+            .status-error {
+                background-color: rgba(231, 76, 60, 0.2);
+                color: #e74c3c;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loading-indicator" class="loading-container">
+            <div class="loading-bar"></div>
+        </div>
+        <div class="container">
+            <header class="header">
+                <h1 class="title">Cashback</h1>
+                <p class="description">Connect your wallet to withdraw your TON cashback</p>
+            </header>
+
+            <div class="card">
+                <div class="wallet-container">
+                    <h2 class="title">Wallet</h2>
+                    <div id="connect-button"></div>
+                </div>
+                <div id="wallet-info" class="wallet-info" style="display: none">
+                    <div class="balance-item">
+                        <span>Wallet Address:</span>
+                        <span id="wallet-address">Not connected</span>
+                    </div>
+                    <div class="balance-item">
+                        <span>Jetton Wallet TON Balance:</span>
+                        <span id="jetton-wallet-ton-balance">0</span>
+                    </div>
+                </div>
+                <button id="refund-button" class="button" disabled>Withdraw Cashback</button>
+                <div id="status-message" class="status-message"></div>
+            </div>
+        </div>
+
+        <script>
+            const contractAddress = 'EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI';
+
+            // Initialize TON Connect UI
+            const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                manifestUrl: 'https://chiliec.github.io/Satoshi/tonconnect-manifest.json',
+                buttonRootId: 'connect-button',
+                uiOptions: {
+                    language: 'en',
+                    uiPreferences: {
+                        theme: TON_CONNECT_UI.THEME.DARK,
+                    },
+                    actionsConfiguration: {
+                        returnStrategy: 'back',
+                    },
+                },
+            });
+
+            // Initialize TonWeb
+            const tonweb = new TonWeb(
+                new TonWeb.HttpProvider('https://toncenter.com/api/v2/jsonRPC', {
+                    // apiKey: API_KEY,
+                }),
+            );
+
+            // Function to create the transaction message body
+            function createMessageBody() {
+                try {
+                    const cell = new TonWeb.boc.Cell();
+                    cell.bits.writeUint(0x00000000, 32);
+                    const messageText = 'withdraw';
+                    cell.bits.writeString(messageText);
+                    return cell;
+                } catch (error) {
+                    console.error('Error in createMessageBody:', error);
+                    throw new Error(`Failed to create message body: ${error.message}`);
+                }
+            }
+
+            // Function to initialize TON Connect
+            async function initTonConnect() {
+                try {
+                    const loadingIndicator = document.getElementById('loading-indicator');
+
+                    // Show loading indicator
+                    loadingIndicator.style.display = 'block';
+
+                    tonConnectUI.onStatusChange(async (wallet) => {
+                        console.log('Wallet status changed:', wallet);
+
+                        if (wallet) {
+                            document.getElementById('wallet-info').style.display = 'block';
+                            document.getElementById('wallet-address').textContent = wallet.account.address;
+                            await updateJettonWalletBalance(wallet.account.address);
+                        } else {
+                            document.getElementById('wallet-info').style.display = 'none';
+                            document.getElementById('refund-button').disabled = true;
+                        }
+                    });
+
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                } catch (error) {
+                    console.error('Connection error:', error);
+                    showStatusMessage('Error connecting to wallet: ' + error.message, false);
+                    document.getElementById('loading-indicator').style.display = 'none';
+                }
+            }
+
+            async function getJettonWalletAddress(ownerAddress) {
+                retryDelay = 1000;
+                maxRetries = 10;
+                let retries = 0;
+                while (retries <= maxRetries) {
+                    try {
+                        const minter = new TonWeb.token.jetton.JettonMinter(tonweb.provider, {
+                            jettonWalletCodeHex:
+                                'b5ee9c72010221010007b3000114ff00f4a413f4bcf2c80b010201620203037ad001d0d3030171b0a301fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088545053036f04f86102f862db3c5512db3cf2e0821d0405020120181901f6eda2edfb018e5e8020d7217021d749c21f953020d70b1fde208210178d4519ba8e1d30d31f018210178d4519baf2e081d33ffa00596c12315230a013a0027fe082107bdd97deba8e19d31f0182107bdd97debaf2e081d33ffa00596c123113a0027fe0307fe07021d749c21f953020d70b1fde2082100f8a7ea5ba06009ec8f84301cc7f01ca0055205afa025820d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf160120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf16c9ed54043a8f0830db3c6c17db3c7fe0208210178d4519bae302208210595f07bcba0708090a00e2d31f0182100f8a7ea5baf2e081d33ffa00fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e08801d2000191d4926d01e255306c14db3c7fe0c0009130e30d701213023c8040702c481350e7c85550db3cc910565e22103902103610351034db3c300c1600c08210178d45195007cb1f15cb3f5003fa020120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf1601206e95307001cb018e1e20d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf16e201fa0201cf1600ced31f018210178d4519baf2e081d33ffa00fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e0880120d70b01c3008e1ffa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e0889472d7216de201fa0051551514433004f4f8425270c705b38ecff8435374db3cf842597059c87001cb017301cb017001cb0012ccccc9f900c87201cb017001cb0012ca07cbffc9d020d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088c705f2e2c3de5184a020c2fff2e2c2f8416f2444ba2bdb3c5e2250cbdb3c5183a15008a122c2000f1e141000d602d0f404306d01810eb5018010f40f6fa1f2e08701810eb522028010f417c801c8f400c901cc7001ca0040035920d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf160120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf16c903fe8ecc7370284813507cc8553082107362d09c5005cb1f13cb3f01fa020120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf1601cf16c954411446551443306d6ddb3c30505595103935335be2256eb38ea105206ef2d0807003c8018210d53276db58cb1fcb3fc91372102443006d6ddb3c3092355be216161100025902f65bf8416f24f8425280c705f2e2c15184a143305239db3c308208ae159fbcf2e2c3708040037f543366c8553082107bdd97de5005cb1f13cb3f01fa020120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf160120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf16c914150186f90182f0095190194aee611ce895c5503adf85fd864de7905746142f608d3eb2faad14e4ba8e9bf8425220c705f2e2c1f8427f7081008210236d6d6ddb3c307fdb31e01600646c31fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e08830fa003171d721fa0031fa0030a703ab00011a24441450331443306d6ddb3c301601cac87101ca01500701ca007001ca02500520d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e088cf165003fa027001ca68236eb3917f93246eb3e2973333017001ca00e30d216eb39c7f01ca0001206ef2d08001cc95317001ca00e2c901fb081700987f01ca00c87001ca007001ca00246eb39d7f01ca0004206ef2d0805004cc9634037001ca00e2246eb39d7f01ca0004206ef2d0805004cc9634037001ca00e27001ca00027f01ca0002c958cc0211bfd816d9e6d9e361a41d1a02039e141b1c000ef82a54633052300213b92db3c5502db3c6c3181d1e000fbbeed44d0d20001801baed44d0d401f863d200018e45fa00fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e08801fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e08843306c13e0f828d70b0a8309baf2e0891f002cf8276f1021a1820898968066b608a18208989680a0a1018afa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e08801fa400120d74981010bbaf2e08820d70b0a208104ffbaf2d0898309baf2e0881202d101db3c2000047002',
+                            address: '0:a4771e4f4968e3f81b745fe0d109f35ebfaadad4d56ff6aa9cbbe5b6f92693a1',
+                        });
+
+                        const owner = new TonWeb.utils.Address(ownerAddress);
+                        const jettonWalletAddress = await minter.getJettonWalletAddress(owner);
+                        return jettonWalletAddress;
+                    } catch (e) {
+                        retries++;
+                        if (retries > maxRetries) {
+                            console.error('Error getting jetton data after maximum retries:', e);
+                            return null;
+                        }
+                        console.warn(`Jetton data fetch attempt ${retries} failed, retrying in ${retryDelay}ms...`);
+                        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+                        retryDelay *= 2;
+                    }
+                }
+            }
+
+            async function getBalance(jettonWalletAddress) {
+                retryDelay = 1000;
+                maxRetries = 10;
+                let retries = 0;
+                while (retries <= maxRetries) {
+                    try {
+                        return await tonweb.getBalance(jettonWalletAddress);
+                    } catch (e) {
+                        retries++;
+                        if (retries > maxRetries) {
+                            console.error('Error getting jetton data after maximum retries:', e);
+                            return null;
+                        }
+                        console.warn(`Jetton data fetch attempt ${retries} failed, retrying in ${retryDelay}ms...`);
+                        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+                        retryDelay *= 2;
+                    }
+                }
+            }
+
+            async function updateJettonWalletBalance(ownerAddress) {
+                try {
+                    document.getElementById('loading-indicator').style.display = 'block';
+
+                    // Get jetton wallet address for this owner
+                    const jettonWalletAddress = await getJettonWalletAddress(ownerAddress);
+                    console.log('Jetton wallet address:', jettonWalletAddress.toString(true, true, true));
+
+                    const tonBalance = await getBalance(jettonWalletAddress);
+
+                    const formattedTonBalance = fromNano(tonBalance);
+                    document.getElementById('jetton-wallet-ton-balance').textContent = formattedTonBalance + ' TON';
+
+                    // Enable/disable refund button based on TON balance
+                    const refundButton = document.getElementById('refund-button');
+                    if (parseFloat(formattedTonBalance) < 0.02) {
+                        refundButton.disabled = true;
+                        refundButton.title = 'Minimum balance of 0.02 TON required';
+                    } else {
+                        refundButton.disabled = false;
+                        refundButton.title = '';
+                    }
+
+                    document.getElementById('loading-indicator').style.display = 'none';
+                } catch (error) {
+                    console.error('Error updating jetton wallet balance:', error);
+                    showStatusMessage('Error updating balance: ' + error.message, false);
+                    document.getElementById('loading-indicator').style.display = 'none';
+                }
+            }
+
+            // Function to handle withdraw action
+            async function withdrawCashback() {
+                try {
+                    document.getElementById('loading-indicator').style.display = 'block';
+
+                    const wallet = tonConnectUI.wallet;
+                    if (!wallet) {
+                        tonConnectUI.openModal();
+                        document.getElementById('loading-indicator').style.display = 'none';
+                        return;
+                    }
+
+                    const body = await createMessageBody();
+                    const payload = btoa(String.fromCharCode(...new Uint8Array(await body.toBoc())));
+
+                    if (!payload) {
+                        throw new Error('Failed to generate payload');
+                    }
+
+                    const transaction = {
+                        validUntil: Math.floor(Date.now() / 1000) + 120,
+                        messages: [
+                            {
+                                address: contractAddress,
+                                amount: '60000000', // 0.06 TON
+                                payload: payload,
+                            },
+                        ],
+                    };
+
+                    const result = await tonConnectUI.sendTransaction(transaction);
+                    console.log('Transaction sent successfully:', result);
+                    showStatusMessage('Cashback withdrawal initiated successfully!', true);
+
+                    // Update balance after transaction
+                    // setTimeout(() => {
+                    //     updateJettonWalletBalance(wallet.account.address);
+                    // }, 5000);
+
+                    document.getElementById('loading-indicator').style.display = 'none';
+                } catch (error) {
+                    console.error('Transaction error:', error);
+                    showStatusMessage('Transaction failed: ' + error.message, false);
+                    document.getElementById('loading-indicator').style.display = 'none';
+                }
+            }
+
+            // Helper function to convert nano TON to TON
+            function fromNano(amount) {
+                return TonWeb.utils.fromNano(amount.toString());
+            }
+
+            // Helper function to show status messages
+            function showStatusMessage(message, isSuccess) {
+                const statusElement = document.getElementById('status-message');
+                statusElement.textContent = message;
+                statusElement.className = 'status-message ' + (isSuccess ? 'status-success' : 'status-error');
+                statusElement.style.display = 'block';
+
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 5000);
+            }
+
+            // Set up event listeners
+            document.addEventListener('DOMContentLoaded', () => {
+                initTonConnect();
+                document.getElementById('refund-button').addEventListener('click', withdrawCashback);
+            });
+        </script>
+    </body>
+</html>
