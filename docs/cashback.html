@@ -50,6 +50,19 @@
                 position: relative;
             }
 
+            .token-image {
+                width: 250px;
+                height: 250px;
+                border-radius: 50%;
+                margin: 20px auto;
+                display: block;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -o-user-select: none;
+                user-select: none;
+            }
+
             .language-selector {
                 position: absolute;
                 top: 0;
@@ -191,6 +204,36 @@
                 background-color: rgba(231, 76, 60, 0.2);
                 color: #e74c3c;
             }
+
+            .title-link {
+                text-decoration: none;
+            }
+
+            .footer {
+                text-align: center;
+                padding: 24px;
+                background: var(--card-bg);
+                border-radius: 16px;
+            }
+
+            .footer-links {
+                display: flex;
+                justify-content: center;
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+
+            .footer-link {
+                text-decoration: none;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            }
+
+            .footer-link:hover {
+                opacity: 1;
+                color: var(--primary);
+                text-decoration: underline;
+            }
         </style>
     </head>
     <body>
@@ -199,7 +242,10 @@
         </div>
         <div class="container">
             <header class="header">
-                <h1 class="title">Cashback</h1>
+                <img src="./logo_with_footer.webp" alt="Satoshi Tribute Token" class="token-image" />
+                <a href="https://chiliec.github.io/Satoshi/" class="title-link">
+                    <h1 class="title">Satoshi Tribute Cashback</h1>
+                </a>
                 <p class="description">Connect your wallet to withdraw your TON cashback</p>
             </header>
 
@@ -209,9 +255,13 @@
                     <div id="connect-button"></div>
                 </div>
                 <div id="wallet-info" class="wallet-info" style="display: none">
-                    <div class="balance-item">
+                    <!-- <div class="balance-item">
                         <span>Wallet Address:</span>
                         <span id="wallet-address">Not connected</span>
+                    </div> -->
+                    <div class="balance-item" id="jetton-info">
+                        <span>Jetton Wallet Address:</span>
+                        <span id="jetton-address">Not connected</span>
                     </div>
                     <div class="balance-item">
                         <span>Jetton Wallet TON Balance:</span>
@@ -221,6 +271,18 @@
                 <button id="refund-button" class="button" disabled>Withdraw Cashback</button>
                 <div id="status-message" class="status-message"></div>
             </div>
+
+            <footer class="footer">
+                <div class="footer-links">
+                    <a href="https://github.com/chiliec/Satoshi" target="_blank" class="footer-link" data-i18n="sourceCode">Source code</a>
+                    <a href="https://t.me/satoshiNotify" target="_blank" class="footer-link" data-i18n="miningNotifications">Mining notifications</a>
+                    <a href="https://t.me/DAOthxS" target="_blank" class="footer-link" data-i18n="community">Community</a>
+                    <a href="https://chiliec.github.io/Satoshi/whitepaper.html" target="_blank" class="footer-link" data-i18n="whitepaper">Whitepaper</a>
+                    <a href="https://dedust.io/swap/TON/EQCkdx5PSWjj-Bt0X-DRCfNev6ra1NVv9qqcu-W2-SaToSHI?amount=3000000000" target="_blank" class="footer-link" data-i18n="swap">Swap</a>
+                    <a href="https://chiliec.github.io/Satoshi/cashback.html" target="_blank" class="footer-link" data-i18n="cashback">Cashback</a>
+                    <a href="javascript:shareWithFriend();" class="footer-link" data-i18n="shareWithFriend">Share with friend</a>
+                </div>
+            </footer>
         </div>
 
         <script>
@@ -275,7 +337,18 @@
 
                         if (wallet) {
                             document.getElementById('wallet-info').style.display = 'block';
-                            document.getElementById('wallet-address').textContent = wallet.account.address;
+                            const rawAddress = wallet.account.address;
+                            // const friendlyAddress = new TonWeb.utils.Address(rawAddress).toString(true, false, false);
+                            // const walletAddressEl = document.getElementById('wallet-address');
+                            // walletAddressEl.innerHTML = `<a href="https://tonviewer.com/${friendlyAddress}" target="_blank" rel="noopener noreferrer">${friendlyAddress}</a>`;
+
+                            const jettonWalletAddress = await getJettonWalletAddress(rawAddress);
+                            if (!jettonWalletAddress) {
+                                throw new Error('Unable to resolve jetton wallet address');
+                            }
+                            const jettonFriendlyAddress = new TonWeb.utils.Address(jettonWalletAddress).toString(true, false, false);
+                            const jettonAddressEl = document.getElementById('jetton-address');
+                            jettonAddressEl.innerHTML = `<a href="https://tonviewer.com/${jettonFriendlyAddress}" target="_blank" rel="noopener noreferrer">${jettonFriendlyAddress}</a>`;
                             await updateJettonWalletBalance(wallet.account.address);
                         } else {
                             document.getElementById('wallet-info').style.display = 'none';
