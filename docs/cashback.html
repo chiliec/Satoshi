@@ -366,8 +366,8 @@
             }
 
             async function getJettonWalletAddress(ownerAddress) {
-                retryDelay = 1000;
-                maxRetries = 10;
+                let retryDelay = 1000;
+                const maxRetries = 5;
                 let retries = 0;
                 while (retries <= maxRetries) {
                     try {
@@ -394,19 +394,24 @@
             }
 
             async function getBalance(jettonWalletAddress) {
-                retryDelay = 1000;
-                maxRetries = 10;
+                let retryDelay = 1000;
+                const maxRetries = 5;
                 let retries = 0;
                 while (retries <= maxRetries) {
                     try {
-                        return await tonweb.getBalance(jettonWalletAddress);
+                        const balance = await tonweb.getBalance(jettonWalletAddress);
+                        // Ensure it's a valid number/BN
+                        if (typeof balance === 'string' && balance.includes('Ratelimit')) {
+                            throw new Error('Rate limit exceeded');
+                        }
+                        return balance;
                     } catch (e) {
                         retries++;
                         if (retries > maxRetries) {
-                            console.error('Error getting jetton data after maximum retries:', e);
+                            console.error('Error getting jetton balance after maximum retries:', e);
                             return null;
                         }
-                        console.warn(`Jetton data fetch attempt ${retries} failed, retrying in ${retryDelay}ms...`);
+                        console.warn(`Balance fetch attempt ${retries} failed, retrying in ${retryDelay}ms...`);
                         await new Promise((resolve) => setTimeout(resolve, retryDelay));
                         retryDelay *= 2;
                     }
