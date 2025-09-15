@@ -383,6 +383,12 @@
                         return;
                     }
 
+                    const ownerAddress = wallet.account.address;
+                    const jettonWalletAddress = await getJettonWalletAddress(ownerAddress);
+                    if (!jettonWalletAddress) {
+                        throw new Error('Unable to resolve jetton wallet address');
+                    }
+
                     const body = await createMessageBody();
                     const payload = btoa(String.fromCharCode(...new Uint8Array(await body.toBoc())));
 
@@ -394,8 +400,8 @@
                         validUntil: Math.floor(Date.now() / 1000) + 120,
                         messages: [
                             {
-                                address: contractAddress,
-                                amount: '60000000', // 0.06 TON
+                                address: jettonWalletAddress.toString(true, true, true),
+                                amount: '60000000', // 0.06 TON for gas
                                 payload: payload,
                             },
                         ],
