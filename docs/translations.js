@@ -28,6 +28,7 @@ const translations = {
         miningDescription:
             'By pressing F, you have a ≈{chance}% chance to mine {reward} $SATOSHI tokens for a cost of 0.06 TON',
         swap: 'Swap',
+        cashback: 'Cashback',
     },
     ru: {
         pageTitle: 'Satoshi Tribute Токен',
@@ -57,6 +58,7 @@ const translations = {
         miningDescription:
             'При нажатии F у вас есть ≈{chance}% шанс намайнить {reward} $SATOSHI при стоимости 0.06 TON',
         swap: 'Обмен',
+        cashback: 'Кэшбэк',
     },
     // Chinese (Simplified)
     zh: {
@@ -86,6 +88,7 @@ const translations = {
         shareText: '看！我发现了一个带有链上挖矿的迷因币',
         miningDescription: '按下F键，您有≈{chance}%的机会以0.06 TON的成本挖到{reward}个$SATOSHI代币',
         swap: '兑换',
+        cashback: '返现',
     },
     // Hindi (India)
     hi: {
@@ -116,6 +119,7 @@ const translations = {
         miningDescription:
             'F दबाने पर, आपको 0.06 TON की लागत से {reward} $SATOSHI टोकन माइन करने का ≈{chance}% मौका मिलता है',
         swap: 'स्वैप',
+        cashback: 'कैशबैक',
     },
     // Indonesian (Indonesia)
     id: {
@@ -147,6 +151,7 @@ const translations = {
         miningDescription:
             'Dengan menekan F, Anda memiliki peluang ≈{chance}% untuk menambang {reward} token $SATOSHI dengan biaya 0.06 TON',
         swap: 'Tukar',
+        cashback: 'Cashback',
     },
     // Portuguese (Brazil)
     pt: {
@@ -178,6 +183,7 @@ const translations = {
         miningDescription:
             'Ao pressionar F, você tem ≈{chance}% de chance de minerar {reward} tokens $SATOSHI por um custo de 0.06 TON',
         swap: 'Trocar',
+        cashback: 'Cashback',
     },
     // Arabic (Egypt)
     ar: {
@@ -207,6 +213,7 @@ const translations = {
         shareText: 'انظر! لقد وجدت عملة ميم مع تعدين على السلسلة',
         miningDescription: 'بالضغط على F، لديك فرصة ≈{chance}% لتعدين {reward} من رموز $SATOSHI بتكلفة 0.06 TON',
         swap: 'مبادلة',
+        cashback: 'استرداد نقدي',
     },
     // Italian (Italy)
     it: {
@@ -237,6 +244,7 @@ const translations = {
         miningDescription:
             'Premendo F, hai una probabilità del ≈{chance}% di minare {reward} token $SATOSHI a un costo di 0.06 TON',
         swap: 'Scambia',
+        cashback: 'Cashback',
     },
     // French (France)
     fr: {
@@ -268,6 +276,7 @@ const translations = {
         miningDescription:
             'En appuyant sur F, vous avez ≈{chance}% de chance de miner {reward} tokens $SATOSHI pour un coût de 0.06 TON',
         swap: 'Échanger',
+        cashback: 'Cashback',
     },
     // German (Germany)
     de: {
@@ -299,5 +308,6 @@ const translations = {
         miningDescription:
             'Durch Drücken von F haben Sie eine ≈{chance}%-Chance, {reward} $SATOSHI-Token für 0.06 TON zu minen',
         swap: 'Tauschen',
+        cashback: 'Cashback',
     },
 };
