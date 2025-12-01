@@ -1,29 +1,43 @@
-import { toNano, Address } from '@ton/core';
-import { Satoshi } from '../wrappers/Satoshi';
-import { NetworkProvider } from '@ton/blueprint';
-import { buildOnchainMetadata } from '../utils/jetton-helpers';
+import { toNano, Address } from '@ton/core'
+import { Satoshi } from '../wrappers/Satoshi'
+import { NetworkProvider } from '@ton/blueprint'
+import { buildOnchainMetadata } from '../utils/jetton-helpers'
+import * as fs from 'fs'
+import * as path from 'path'
 
 export async function run(provider: NetworkProvider) {
+    const ui = provider.ui()
+    const contractAddress = await ui.input('Please enter contract address:')
 
-    const ui = provider.ui();
-
-    const contractAddress = await ui.input('Please enter contract address:');
-
-    const satoshi = provider.open(Satoshi.fromAddress(Address.parse(contractAddress)));
-
-    const name = await ui.input('Please enter jetton name:');
-    const description = await ui.input('Please enter jetton description:');
-    const symbol = await ui.input('Please enter jetton symbol:');
-    const image = await ui.input('Please enter link to jetton image:');
-
-    const jettonParams = {
-        name: name,
-        description: description,
-        symbol: symbol,
-        image: image,
+    // Load metadata.json
+    const metadataPath = path.resolve(__dirname, '../docs/metadata.json')
+    if (!fs.existsSync(metadataPath)) {
+        throw new Error(`metadata.json not found at ${metadataPath}`)
     }
-    const content = buildOnchainMetadata(jettonParams);
 
+    const raw = fs.readFileSync(metadataPath, 'utf8')
+    const metadata = JSON.parse(raw)
+
+    // Remove address from metadata if present
+    const { address, ...metadataWithoutAddress } = metadata
+    console.log('\nLoaded metadata:')
+    console.log(metadataWithoutAddress)
+
+    const confirm = await ui.input('\nProceed with updating jetton content? (yes/no)')
+
+    if (confirm.toLowerCase() !== 'yes') {
+        console.log('Operation cancelled.')
+        return
+    }
+
+    const satoshi = provider.open(
+        Satoshi.fromAddress(Address.parse(contractAddress))
+    )
+
+    // Build metadata cell from all fields except "address"
+    const content = buildOnchainMetadata(metadataWithoutAddress)
+
+    // Send transaction
     await satoshi.send(
         provider.sender(),
         {
@@ -31,9 +45,9 @@ export async function run(provider: NetworkProvider) {
         },
         {
             $$type: 'TokenUpdateContent',
-            content: content,
+            content,
         }
-    );
+    )
 
-    console.log('Transaction to change content was sended for address', satoshi.address);
+    console.log('\nTransaction to change content was sent for address', satoshi.address)
 }

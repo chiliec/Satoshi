@@ -1,17 +1,7 @@
 {
-    "uri": "https://chiliec.github.io/Satoshi/metadata.json?v=1",
     "name": "Satoshi Tribute",
     "symbol": "SATOSHI",
     "decimals": "9",
     "image": "https://chiliec.github.io/Satoshi/logo.webp",
     "description": "A tribute to Satoshi Nakamoto's legacy. Press F and pay your respects to the creator of Bitcoin.",
-    "links": {
-        "social": [
-            "https://t.me/DAOthxS",
-            "https://github.com/chiliec/Satoshi"
-        ],
-        "websites": [
-            "https://chiliec.github.io/Satoshi/"
-        ]
-    }
 }
